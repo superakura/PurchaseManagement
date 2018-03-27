@@ -30,10 +30,6 @@ namespace PurchaseManagement.Models
         [StringLength(50)]
         public string UserMobile { get; set; }//用户手机
 
-        [Required]
-        [StringLength(30)]
-        public string UserRole { get; set; }
-
         [StringLength(200)]
         public string UserRemark { get; set; }//用户备注
 
