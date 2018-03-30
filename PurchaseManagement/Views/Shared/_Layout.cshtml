@@ -28,6 +28,13 @@
         label.error {
             color: red;
         }
+        .pagination {
+            margin: 0px;
+        }
+
+            .pagination a {
+                height: 34px;
+            }
     </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -35,6 +42,7 @@
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.messages_cn.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap-paginator.min.js"></script>
     <script src="~/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
     <script src="~/bower_components/fastclick/lib/fastclick.js"></script>
     <script src="~/dist/js/adminlte.min.js"></script>
@@ -90,10 +98,9 @@
         <!-- 底部区域 -->
         <footer class="main-footer">
             <div class="pull-right hidden-xs">
-                <b>Version</b> 2.4.0
+                <b>Version</b> 1.0.0
             </div>
-            <strong>Copyright &copy; 2014-2016 <a href="https://adminlte.io">Almsaeed Studio</a>.</strong> All rights
-            reserved.
+            <strong>Copyright &copy; @DateTime.Now.Year</strong> 大庆炼化公司 信息中心
         </footer>
 
         <!-- 控制侧边栏 -->

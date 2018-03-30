@@ -26,6 +26,7 @@
         public virtual DbSet<RoleAuthority> RoleAuthority { get; set; }//角色权限关系表
         public virtual DbSet<RoleInfo> RoleInfo { get; set; }//角色信息表
         public virtual DbSet<UserRole> UserRole { get; set; }//用户角色关系表
+        public virtual DbSet<NoticeInfo> NoticeInfo { get; set; }//通知公告信息表
     }
 
     //public class MyEntity
