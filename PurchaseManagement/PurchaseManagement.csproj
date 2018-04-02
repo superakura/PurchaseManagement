@@ -7359,6 +7359,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AuthorityInfoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NoticeInfoController.cs" />
     <Compile Include="Controllers\TestController.cs" />
@@ -7377,6 +7378,14 @@
     <Compile Include="Migrations\201803290050477_edit1.Designer.cs">
       <DependentUpon>201803290050477_edit1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804020115246_edit2.cs" />
+    <Compile Include="Migrations\201804020115246_edit2.Designer.cs">
+      <DependentUpon>201804020115246_edit2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804020117195_edit3.cs" />
+    <Compile Include="Migrations\201804020117195_edit3.Designer.cs">
+      <DependentUpon>201804020117195_edit3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AuthorityInfo.cs" />
     <Compile Include="Models\DB.cs" />
@@ -7384,6 +7393,7 @@
     <Compile Include="Models\NoticeInfo.cs" />
     <Compile Include="Models\RoleAuthority.cs" />
     <Compile Include="Models\RoleInfo.cs" />
+    <Compile Include="Models\UserDept.cs" />
     <Compile Include="Models\UserInfo.cs" />
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="net\App_Code\Config.cs" />
@@ -7408,6 +7418,7 @@
     <Content Include="third-party\video-js\font\vjs.ttf" />
     <Content Include="third-party\video-js\font\vjs.woff" />
     <Content Include="Views\NoticeInfo\NoticeShow.cshtml" />
+    <Content Include="Views\AuthorityInfo\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -7430,6 +7441,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803290050477_edit1.resx">
       <DependentUpon>201803290050477_edit1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804020115246_edit2.resx">
+      <DependentUpon>201804020115246_edit2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804020117195_edit3.resx">
+      <DependentUpon>201804020117195_edit3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
