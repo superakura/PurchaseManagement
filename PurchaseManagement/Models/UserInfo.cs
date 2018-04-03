@@ -30,6 +30,12 @@ namespace PurchaseManagement.Models
         [StringLength(50)]
         public string UserMobile { get; set; }//用户手机
 
+        [StringLength(100)]
+        public string UserDuty { get; set; }//用户职务
+
+        [DataType(DataType.EmailAddress)]
+        public string UserEmail { get; set; }//用户电子邮件
+
         [StringLength(200)]
         public string UserRemark { get; set; }//用户备注
 

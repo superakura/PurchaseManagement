@@ -26,6 +26,8 @@ namespace PurchaseManagement.Models
 
         public int DeptOrder { get; set; }//部门顺序
 
+        public byte Open { get; set; }//菜单是否展开
+
         public DateTime DeptCreateDate { get; set; }//部门创建日期时间
     }
 }

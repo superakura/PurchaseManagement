@@ -1,0 +1,489 @@
+﻿
+@{
+    ViewBag.Title = "用户信息管理";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><span id="myTitle">用户信息</span>--【当前部门：<span id="deptNameModal"></span>】</h4>
+                <span id="deptIDModal"></span>
+                <span id="userIDModal"></span>
+            </div>
+            <div class="modal-body">
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false">基本信息</a></li>
+                        <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="true">角色与管理范围</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_1">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-horizontal">
+                                            <form>
+                                                <div class="form-group">
+                                                    <label for="tbxUserName">姓名</label>
+                                                    <input type="text" class="form-control" id="tbxUserName" placeholder="姓名">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="tbxUserNum">员工编号</label>
+                                                    <input type="text" class="form-control" id="tbxUserNum" placeholder="员工编号">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="tbxUserDuty">职务</label>
+                                                    <input type="text" class="form-control" id="tbxUserDuty" placeholder="职务">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-5">
+                                        <div class="form-horizontal">
+                                            <form>
+                                                <div class="form-group">
+                                                    <label for="tbxUserPhone">电话</label>
+                                                    <input type="text" class="form-control" id="tbxUserPhone" placeholder="电话">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="tbxUserEmail">电子邮件</label>
+                                                    <input type="text" class="form-control" id="tbxUserEmail" placeholder="电子邮件">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="tbxUserRemark">备注</label>
+                                                    <input type="text" class="form-control" id="tbxUserRemark" placeholder="备注">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab_2">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-5">
+                                            <h5>【管理范围】</h5>
+                                            <ul class="ztree well" id="roleDeptList"></ul>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <h5>【用户角色】</h5>
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr class="success">
+                                                        <th>选择</th>
+                                                        <th>角色名称</th>
+                                                        <th>角色描述</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="roleTableList"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="btnSubmit" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div>s
+<div class="row">
+    <div class="col-md-4 col-lg-3">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">部门列表</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                <iframe style="width:100%;border:none;" src="/Dept/iFrameDeptTree" id="iFrameLeftDept" name="LeftDept"></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8 col-lg-9">
+        <div class="box box-danger">
+            <div class="box-header">
+                <h3 class="box-title">用户信息管理</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+                                <label>用户姓名：</label>
+                                <input type="text" class="form-control" id="tbxUserName" placeholder="用户姓名">
+                            </div>
+                            <div class="form-group">
+                                <label for="tbxUserNum">员工编号：</label>
+                                <input type="text" class="form-control" id="tbxUserNum" placeholder="员工编号">
+                            </div>
+                            <button type="button" id="btnSearch" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-search"></span> 查询
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="toolbar" class="btn-group">
+                            <button id="btnAdd" type="button" class="btn btn-info">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 新增
+                            </button>
+                            <button id="btnDelSelect" type="button" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 删除
+                            </button>
+                        </div>
+                        <table id="bsTable"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        var setting = {
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback: {
+                onClick: zTreeOnClick
+            },
+            check: {
+                enable: true,
+                chkDisabledInherit: false,
+                nocheckInherit: false
+            }
+        };
+        function zTreeOnClick(event, treeId, treeNode) {
+        };
+        function LoadDeptList(ele, set) {
+            $("#roleDeptList").remove("li");
+            $.ajax({
+                url: "/Dept/LoadDeptList",
+                cache: false,
+                dataType: "json",
+                success: function (result) {
+                    $.fn.zTree.init($(ele), set, result);
+                }
+            });
+        };
+        LoadDeptList("#roleDeptList", setting);
+        function getRoleList() {
+            $.post("/RoleInfo/GetListForUser", function (result) {
+                var temp = "";
+                $.each(result, function (index, val) {
+                    temp += "<tr><td><input name='cbxRole' type='checkbox' value='" + val["RoleID"] + "' /></td><td>" + val["RoleName"] + "</td>";
+                    temp += "<td>" + val["RoleDescribe"] + "</td>";
+                    temp += "</tr>";
+                });
+                $("#roleTableList").empty().append(temp);
+            });
+        }
+        //1.初始化Table
+        var oTable = new TableInit();
+        oTable.Init();
+
+        //2.初始化Button的点击事件
+        var oButtonInit = new ButtonInit();
+        oButtonInit.Init();
+
+        $("#btnAdd").click(function () {
+            //clearInfo();
+            $('#myModal').modal('show');
+            getRoleList();
+        });
+        function clearInfo() {
+            $("#tbxName,#tbxType,#tbxConflictCode,#tbxDescribe,#tbxMenuName,#tbxMenuIcon").val("");
+            $("#AuthorityID").text("");
+            $("label.error").hide();
+            $(".error").removeClass("error");
+        }
+
+        $("#btnSubmit").click(function () {
+            $("#formInfo").validate({
+                rules: {
+                    tbxType: { required: true, maxlength: 6, chinese: true },
+                    tbxDescribe: { maxlength: 20 },
+                    tbxName: { required: true, maxlength: 15 },
+                    tbxConflictCode: { number: true, max: 2 }
+                },
+                submitHandler: function (form) {
+                    if ($("#AuthorityID").text() != "") {
+                        Ewin.confirm({ message: "确认要修改权限信息吗？" }).on(function (e) {
+                            if (!e) {
+                                return;
+                            }
+                            else {
+                                var name = $("#tbxName").val();
+                                var type = $("#ddlType").val();
+                                var code = $("#tbxConflictCode").val();
+                                var desc = $("#tbxDescribe").val();
+                                var menuName = $("#tbxMenuName").val();
+                                var menuIcon = $("#tbxMenuIcon").val();
+                                var url = $("#tbxMenuUrl").val();
+                                var fatherID = $("#tbxMenuFatherName").val();
+                                var order = $("#tbxMenuOrder").val();
+
+                                var id = $("#AuthorityID").text();
+
+                                var args = {
+                                    "id": id,
+                                    "name": name,
+                                    "menuName": menuName,
+                                    "menuIcon": menuIcon,
+                                    "type": type,
+                                    "code": code,
+                                    "desc": desc,
+                                    "url": url,
+                                    "fatherID": fatherID,
+                                    "order": order
+                                };
+
+                                $.post("/AuthorityInfo/Update", encodeURIComponent(JSON.stringify(args)), function (result) {
+                                    if (result == "ok") {
+                                        $("#myModal").modal("hide");
+                                        toastr["success"]("修改权限成功", "提示");
+                                        clearInfo();
+                                        $("#bsTable").bootstrapTable('refresh');
+                                    }
+                                    else {
+                                        $("#myModal").modal("hide");
+                                        toastr["error"]("保存错误，请联系5613877！", "提示");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        Ewin.confirm({ message: "确认要增加权限【" + $("#tbxName").val() + "】吗？" }).on(function (e) {
+                            if (!e) {
+                                return;
+                            }
+                            else {
+                                var name = $("#tbxName").val();
+                                var type = $("#ddlType").val();
+                                var code = $("#tbxConflictCode").val();
+                                var desc = $("#tbxDescribe").val();
+                                var url = $("#tbxMenuUrl").val();
+                                var fatherID = $("#tbxMenuFatherName").val();
+                                var menuName = $("#tbxMenuName").val();
+                                var menuIcon = $("#tbxMenuIcon").val();
+                                var order = $("#tbxMenuOrder").val();
+
+                                var args = {
+                                    "name": name,
+                                    "menuName": menuName,
+                                    "menuIcon": menuIcon,
+                                    "type": type,
+                                    "code": code,
+                                    "desc": desc,
+                                    "url": url,
+                                    "fatherID": fatherID,
+                                    "order": order
+                                };
+
+                                $.post("/AuthorityInfo/Insert", encodeURIComponent(JSON.stringify(args)), function (result) {
+                                    if (result == "ok") {
+                                        $("#myModal").modal("hide");
+                                        toastr.success("添加权限【" + name + "】成功", "提示");
+                                        clearInfo();
+                                        $("#bsTable").bootstrapTable('refresh');
+                                    }
+                                    else {
+                                        $("#myModal").modal("hide");
+                                        toastr.error("保存错误，请联系5613877！", "提示");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        var columns = [
+            {
+                checkbox: true
+            },
+            {
+                field: 'UserID',
+                title: 'ID编号'
+            },
+            {
+                field: 'UserNum',
+                title: '员工编号'
+            },
+            {
+                field: 'UserName',
+                title: '用户姓名'
+            }, {
+                field: 'DeptName',
+                title: '部门名称'
+            },
+            {
+                field: 'UserPhone',
+                title: '办公电话'
+            },
+            {
+                field: 'UserMobile',
+                title: '手机'
+            },
+            {
+                field: 'UserDuty',
+                title: '用户职务'
+            },
+            {
+                field: 'UserEmail',
+                title: '电子邮件'
+            },
+            {
+                field: 'operate',
+                title: '编辑&删除',
+                align: 'center',
+                events: operateEvents,
+                formatter: operateFormatter
+            }];
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#bsTable').bootstrapTable({
+                url: '/UserInfo/GetList',         //请求后台的URL（*）
+                contentType: 'application/x-www-form-urlencoded',
+                method: 'post',                     //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: false,                     //是否启用排序
+                sortOrder: "asc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 15, 20, 25],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 600,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "UserID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                paginationPreText: "上一页",
+                paginationNextText: "下一页",
+                showExport: false,                     //是否显示导出
+                columns: columns
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                limit: params.limit,   //页面大小
+                offset: params.offset,  //页码
+                userName: $("#tbxUserName").val(),
+                deptID: $("#tbxUserNum").val(),
+                userNum: $("#tbxUserNum").val()
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+    window.operateEvents = {
+        'click .edit': function (e, value, row, index) {
+            //alert('You click like action, row: ' + JSON.stringify(row));
+            //console.log(row.AuthorityID);
+            $("label.error").hide();
+            $(".error").removeClass("error");
+            $('#myModal').modal('show');
+            $("#modalTitle").text("编辑权限信息");
+            $("#AuthorityID").text(row.AuthorityID);
+            var args = { "id": row.AuthorityID };
+            $.post("/AuthorityInfo/GetOne", encodeURIComponent(JSON.stringify(args)), function (result) {
+                $("#tbxName").val(result["AuthorityName"]);
+                $("#ddlType").val(result["AuthorityType"]);
+                $("#tbxDescribe").val(result["AuthorityDescribe"]);
+                $("#tbxConflictCode").val(result["ConflictCode"]);
+                $("#tbxMenuUrl").val(result["MenuUrl"]);
+                $("#tbxMenuFatherName").val(result["MenuFatherID"]);
+                $("#tbxMenuOrder").val(result["MenuOrder"]);
+                $("#tbxMenuName").val(result["MenuName"]);
+                $("#tbxMenuIcon").val(result["MenuIcon"]);
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            Ewin.confirm({ message: "确认要删除【" + row.AuthorityName + "】吗？" }).on(function (e) {
+                if (!e) {
+                    return;
+                }
+                //写服务器后台删除方法,成功后执行页面删除数据
+                var args = { "id": row.AuthorityID };
+                $.post("/AuthorityInfo/Del", encodeURIComponent(JSON.stringify(args)), function (result) {
+                    if (result == "ok") {
+                        //后台删除成功后，调用前台删除方法
+                        $('#bsTable').bootstrapTable('remove', {
+                            field: 'AuthorityID',
+                            values: [row.AuthorityID]
+                        });
+                        toastr.success("删除【" + row.AuthorityName + "】成功！", "提示")
+                    }
+                    else {
+                        toastr.error("保存错误，请联系5613877！", "提示");
+                    }
+                });
+
+            });
+        }
+    };
+    function operateFormatter(value, row, index) {
+        return [
+            '<a class="edit" href="javascript:void(0)" title="edit">',
+            '<i class="glyphicon glyphicon-pencil"></i>',
+            '</a>  ',
+            '<a class="remove" href="javascript:void(0)" title="Remove">',
+            '<i class="glyphicon glyphicon-trash"></i>',
+            '</a>'
+        ].join('&nbsp;&nbsp;');
+    }
+    var ButtonInit = function () {
+        var oInit = new Object();
+
+        oInit.Init = function () {
+            //初始化页面上面的按钮事件
+            $("#btnSearch").click(function () {
+                $("#bsTable").bootstrapTable('refresh');
+            });
+        };
+
+        return oInit;
+    };
+</script>
+
+
