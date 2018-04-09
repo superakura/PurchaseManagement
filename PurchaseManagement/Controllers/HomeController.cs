@@ -125,40 +125,6 @@ namespace PurchaseManagement.Controllers
                     System.Web.HttpContext.Current.Response.Cookies.Add(userNameCookie);
                     #endregion
 
-                    #region 设置menu的cookie
-                    var menu = from u in db.UserInfo
-                               join r in db.UserRole on u.UserID equals r.UserID
-                               join ra in db.RoleAuthority on r.RoleID equals ra.RoleID
-                               join a in db.AuthorityInfo on ra.AuthorityID equals a.AuthorityID
-                               where u.UserNum == userNum & a.AuthorityType == "菜单"
-                               select new { a.AuthorityName, a.MenuFatherID, a.MenuUrl, a.MenuOrder, a.MenuIcon, a.MenuName, a.AuthorityID };
-
-                    var fatherMenu = menu.Distinct().Where(w => w.MenuFatherID == 0).OrderBy(o => o.MenuOrder).ToList();
-
-                    Dictionary<string, object> menuDic = new Dictionary<string, object>();
-                    foreach (var item in fatherMenu)
-                    {
-                        ArrayList list = new ArrayList();
-                        list.Add(item.AuthorityID);
-                        list.Add(item.AuthorityName);
-                        list.Add(item.MenuFatherID);
-                        list.Add(item.MenuIcon);
-                        list.Add(item.MenuUrl);
-                        list.Add(item.MenuOrder);
-                        list.Add(item.MenuName);
-
-                        var child = menu.Where(w => w.MenuFatherID == item.AuthorityID).ToList();
-                        list.Add(child);
-
-                        menuDic.Add(item.AuthorityName, list);
-                    }
-
-                    var cUserMenu = JsonConvert.SerializeObject(menuDic
-                        , new Newtonsoft.Json.JsonSerializerSettings() { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii });
-                    System.Web.HttpCookie userMenuCookie = new System.Web.HttpCookie("cUserMenu", cUserMenu);
-                    System.Web.HttpContext.Current.Response.Cookies.Add(userMenuCookie);
-                    #endregion
-
                     return Redirect(returnUrl ?? Url.Action("Index", "Home"));
                 }
                 else
@@ -179,6 +145,48 @@ namespace PurchaseManagement.Controllers
         {
             FormsAuthentication.SignOut();
             return Redirect("/Home/Login");
+        }
+
+        //获取菜单
+        [HttpPost]
+        public JsonResult GetMenu()
+        {
+            try
+            {
+                var userNum = User.Identity.Name;
+                var menu = from u in db.UserInfo
+                           join r in db.UserRole on u.UserID equals r.UserID
+                           join ra in db.RoleAuthority on r.RoleID equals ra.RoleID
+                           join a in db.AuthorityInfo on ra.AuthorityID equals a.AuthorityID
+                           where u.UserNum == userNum & a.AuthorityType == "菜单"
+                           select new { a.AuthorityName, a.MenuFatherID, a.MenuUrl, a.MenuOrder, a.MenuIcon, a.MenuName, a.AuthorityID };
+
+                var fatherMenu = menu.Distinct().Where(w => w.MenuFatherID == 0).OrderBy(o => o.MenuOrder).ToList();
+
+                Dictionary<string, object> menuDic = new Dictionary<string, object>();
+                foreach (var item in fatherMenu)
+                {
+                    ArrayList list = new ArrayList();
+                    list.Add(item.AuthorityID);
+                    list.Add(item.AuthorityName);
+                    list.Add(item.MenuFatherID);
+                    list.Add(item.MenuIcon);
+                    list.Add(item.MenuUrl);
+                    list.Add(item.MenuOrder);
+                    list.Add(item.MenuName);
+
+                    var child = menu.Where(w => w.MenuFatherID == item.AuthorityID).ToList();
+                    list.Add(child);
+
+                    menuDic.Add(item.AuthorityName, list);
+                }
+                return Json(menuDic);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+                throw;
+            }
         }
 
         //系统主页

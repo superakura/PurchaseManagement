@@ -357,15 +357,12 @@
                 });
 
                 //从cookie中读取用户姓名和菜单
-                GetUserFromCookie();
-                function GetUserFromCookie() {
-                    //显示登录用户姓名
-                    $("#lblUserName").text("欢迎：" + decodeURIComponent(getCookie("cUserName")));
+                $("#lblUserName").text("欢迎：" + decodeURIComponent(getCookie("cUserName")));
 
-                    //从系统后台加载菜单
-                    var menuJson = jQuery.parseJSON(getCookie("cUserMenu"));
+                //从数据库中获取菜单
+                $.post("/Home/GetMenu", "", function (result) {
                     var menuInfo = "";
-                    $.each(menuJson, function (indexInArray, valueOfElement) {
+                    $.each(result, function (indexInArray, valueOfElement) {
                         var url = valueOfElement[4];
                         var icon = valueOfElement[3];
                         var text = valueOfElement[6];
@@ -384,7 +381,6 @@
                         }
                     });
                     $("#menuList").empty().append(menuInfo);
-
                     //设置菜单活动项
                     var string = document.location.pathname;
                     var url = string.split("/");
@@ -398,7 +394,7 @@
 
                         $($('a[href*="' + "/" + url[1] + '"]')).parent().addClass('active').siblings().removeClass('active');
                     }
-                }
+                });
             });
         </script>
     </div>

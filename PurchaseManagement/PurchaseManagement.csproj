@@ -7371,6 +7371,8 @@
     <Compile Include="Controllers\AuthorityInfoController.cs" />
     <Compile Include="Controllers\DeptController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MaterialCodeController.cs" />
+    <Compile Include="Controllers\MaterialQualityFeedbackController.cs" />
     <Compile Include="Controllers\NoticeInfoController.cs" />
     <Compile Include="Controllers\RoleInfoController.cs" />
     <Compile Include="Controllers\TestController.cs" />
@@ -7445,6 +7447,11 @@
     <Content Include="Views\Dept\iFrameDeptTree.cshtml" />
     <Content Include="Views\Dept\iFrameDeptTreeNoRole.cshtml" />
     <Content Include="Views\UserInfo\Index.cshtml" />
+    <Content Include="Views\MaterialQualityFeedback\Add.cshtml" />
+    <Content Include="Views\MaterialQualityFeedback\accept.cshtml" />
+    <Content Include="Views\MaterialQualityFeedback\Reply.cshtml" />
+    <Content Include="Views\MaterialQualityFeedback\Statistic.cshtml" />
+    <Content Include="Views\MaterialQualityFeedback\MaterialQualityType.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -7457,6 +7464,7 @@
     <Folder Include="bower_components\jquery\src\ajax\" />
     <Folder Include="net\upload\file\" />
     <Folder Include="net\upload\image\" />
+    <Folder Include="Views\MaterialCode\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201803260221151_edit.resx">

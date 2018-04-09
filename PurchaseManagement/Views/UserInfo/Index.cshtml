@@ -3,13 +3,14 @@
     ViewBag.Title = "用户信息管理";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link href="~/Content/metroStyle/metroStyle.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.ztree.all-3.5.min.js"></script>
 <div class="modal fade" id="myModal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title"><span id="myTitle">用户信息</span>--【当前部门：<span id="deptNameModal"></span>】</h4>
-                <span id="deptIDModal"></span>
                 <span id="userIDModal"></span>
             </div>
             <div class="modal-body">
@@ -21,46 +22,48 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
                             <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <div class="form-horizontal">
-                                            <form>
-                                                <div class="form-group">
-                                                    <label for="tbxUserName">姓名</label>
-                                                    <input type="text" class="form-control" id="tbxUserName" placeholder="姓名">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="tbxUserNum">员工编号</label>
-                                                    <input type="text" class="form-control" id="tbxUserNum" placeholder="员工编号">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="tbxUserDuty">职务</label>
-                                                    <input type="text" class="form-control" id="tbxUserDuty" placeholder="职务">
-                                                </div>
-                                            </form>
+                                <div class="form-horizontal">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <label for="tbxUserName">姓名</label>
+                                                <input type="text" class="form-control" id="tbxUserName" placeholder="姓名">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="tbxUserNum">员工编号</label>
+                                                <input type="text" class="form-control" id="tbxUserNum" placeholder="员工编号">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="tbxUserDuty">职务</label>
+                                                <input type="text" class="form-control" id="tbxUserDuty" placeholder="职务">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2"></div>
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <label for="tbxUserPhone">办公电话</label>
+                                                <input type="text" class="form-control" id="tbxUserPhone" placeholder="办公电话">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="tbxUserMobile">手机</label>
+                                                <input type="text" class="form-control" id="tbxUserMobile" placeholder="手机">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="tbxUserEmail">电子邮件</label>
+                                                <input type="text" class="form-control" id="tbxUserEmail" placeholder="电子邮件">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2"></div>
-                                    <div class="col-md-5">
-                                        <div class="form-horizontal">
-                                            <form>
-                                                <div class="form-group">
-                                                    <label for="tbxUserPhone">电话</label>
-                                                    <input type="text" class="form-control" id="tbxUserPhone" placeholder="电话">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="tbxUserEmail">电子邮件</label>
-                                                    <input type="text" class="form-control" id="tbxUserEmail" placeholder="电子邮件">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="tbxUserRemark">备注</label>
-                                                    <input type="text" class="form-control" id="tbxUserRemark" placeholder="备注">
-                                                </div>
-                                            </form>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="tbxUserRemark">用户备注</label>
+                                                <textarea class="form-control" id="tbxUserRemark" rows="3" cols="20"></textarea>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                         <div class="tab-pane" id="tab_2">
                             <div class="container-fluid">
@@ -96,7 +99,7 @@
             </div>
         </div>
     </div>
-</div>s
+</div>
 <div class="row">
     <div class="col-md-4 col-lg-3">
         <div class="box box-primary">
@@ -116,7 +119,7 @@
     <div class="col-md-8 col-lg-9">
         <div class="box box-danger">
             <div class="box-header">
-                <h3 class="box-title">用户信息管理</h3>
+                <h3 class="box-title">用户信息管理【当前部门：<span id="selectDept"></span><span class="hidden" id="selectDeptID"></span>】</h3>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="collapse">
                         <i class="fa fa-minus"></i>
@@ -141,7 +144,6 @@
                         </form>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-12">
                         <div id="toolbar" class="btn-group">
@@ -150,6 +152,9 @@
                             </button>
                             <button id="btnDelSelect" type="button" class="btn btn-danger">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 删除
+                            </button>
+                            <button id="btnExport" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-export" aria-hidden="true"></span> 数据导出
                             </button>
                         </div>
                         <table id="bsTable"></table>
@@ -189,7 +194,8 @@
                 }
             });
         };
-        LoadDeptList("#roleDeptList", setting);
+        
+
         function getRoleList() {
             $.post("/RoleInfo/GetListForUser", function (result) {
                 var temp = "";
@@ -201,6 +207,7 @@
                 $("#roleTableList").empty().append(temp);
             });
         }
+
         //1.初始化Table
         var oTable = new TableInit();
         oTable.Init();
@@ -212,7 +219,10 @@
         $("#btnAdd").click(function () {
             //clearInfo();
             $('#myModal').modal('show');
+            $("#myTitle").text("新增用户");
+            $("#deptNameModal").text($("#selectDept").text());
             getRoleList();
+            LoadDeptList("#roleDeptList", setting);
         });
         function clearInfo() {
             $("#tbxName,#tbxType,#tbxConflictCode,#tbxDescribe,#tbxMenuName,#tbxMenuIcon").val("");
@@ -220,107 +230,98 @@
             $("label.error").hide();
             $(".error").removeClass("error");
         }
-
+        function getTreeChecked() {
+            var newsDeliver = {};
+            var treeObj = $.fn.zTree.getZTreeObj("roleDeptList");
+            var nodesInfo = treeObj.getCheckedNodes(true);
+            for (var i = 0; i < nodesInfo.length; i++) {
+                newsDeliver[i] += JSON.stringify(nodesInfo[i]["id"]);
+            }
+            return JSON.stringify(newsDeliver).replace(/undefined/g, "")
+        }
         $("#btnSubmit").click(function () {
-            $("#formInfo").validate({
-                rules: {
-                    tbxType: { required: true, maxlength: 6, chinese: true },
-                    tbxDescribe: { maxlength: 20 },
-                    tbxName: { required: true, maxlength: 15 },
-                    tbxConflictCode: { number: true, max: 2 }
-                },
-                submitHandler: function (form) {
-                    if ($("#AuthorityID").text() != "") {
-                        Ewin.confirm({ message: "确认要修改权限信息吗？" }).on(function (e) {
-                            if (!e) {
-                                return;
-                            }
-                            else {
-                                var name = $("#tbxName").val();
-                                var type = $("#ddlType").val();
-                                var code = $("#tbxConflictCode").val();
-                                var desc = $("#tbxDescribe").val();
-                                var menuName = $("#tbxMenuName").val();
-                                var menuIcon = $("#tbxMenuIcon").val();
-                                var url = $("#tbxMenuUrl").val();
-                                var fatherID = $("#tbxMenuFatherName").val();
-                                var order = $("#tbxMenuOrder").val();
-
-                                var id = $("#AuthorityID").text();
-
-                                var args = {
-                                    "id": id,
-                                    "name": name,
-                                    "menuName": menuName,
-                                    "menuIcon": menuIcon,
-                                    "type": type,
-                                    "code": code,
-                                    "desc": desc,
-                                    "url": url,
-                                    "fatherID": fatherID,
-                                    "order": order
-                                };
-
-                                $.post("/AuthorityInfo/Update", encodeURIComponent(JSON.stringify(args)), function (result) {
-                                    if (result == "ok") {
-                                        $("#myModal").modal("hide");
-                                        toastr["success"]("修改权限成功", "提示");
-                                        clearInfo();
-                                        $("#bsTable").bootstrapTable('refresh');
-                                    }
-                                    else {
-                                        $("#myModal").modal("hide");
-                                        toastr["error"]("保存错误，请联系5613877！", "提示");
-                                    }
-                                });
-                            }
-                        });
+            if ($("#userIDModal").text() != "") {
+                Ewin.confirm({ message: "确认要修改用户【" + $("#tbxUserName").val() + "】吗？" }).on(function (e) {
+                    if (!e) {
+                        return;
                     }
                     else {
-                        Ewin.confirm({ message: "确认要增加权限【" + $("#tbxName").val() + "】吗？" }).on(function (e) {
-                            if (!e) {
-                                return;
+                        var name = $("#tbxUserName").val();
+                        var duty = $("#tbxUserDuty").val();
+                        var phone = $("#tbxUserPhone").val();
+                        var email = $("#tbxUserEmail").val();
+                        var remark = $("#tbxUserRemark").val();
+                        var args = {
+                            "id": $("#userIDModal").text(),
+                            "name": name,
+                            "duty": duty,
+                            "email": email,
+                            "remark": remark,
+                            "phone": phone
+                        };
+                        $.post("/UserInfo/UpdateUserInfo", encodeURIComponent(JSON.stringify(args)), function (result) {
+                            if (result == "ok") {
+                                $("#myModal").modal("hide");
+                                toastr["success"]("修改用户【" + name + "】成功", "提示");
+                                clearInfo();
+                                getList($("#tbxCurPage").val(), $("#ddlPageSize").val());
                             }
                             else {
-                                var name = $("#tbxName").val();
-                                var type = $("#ddlType").val();
-                                var code = $("#tbxConflictCode").val();
-                                var desc = $("#tbxDescribe").val();
-                                var url = $("#tbxMenuUrl").val();
-                                var fatherID = $("#tbxMenuFatherName").val();
-                                var menuName = $("#tbxMenuName").val();
-                                var menuIcon = $("#tbxMenuIcon").val();
-                                var order = $("#tbxMenuOrder").val();
-
-                                var args = {
-                                    "name": name,
-                                    "menuName": menuName,
-                                    "menuIcon": menuIcon,
-                                    "type": type,
-                                    "code": code,
-                                    "desc": desc,
-                                    "url": url,
-                                    "fatherID": fatherID,
-                                    "order": order
-                                };
-
-                                $.post("/AuthorityInfo/Insert", encodeURIComponent(JSON.stringify(args)), function (result) {
-                                    if (result == "ok") {
-                                        $("#myModal").modal("hide");
-                                        toastr.success("添加权限【" + name + "】成功", "提示");
-                                        clearInfo();
-                                        $("#bsTable").bootstrapTable('refresh');
-                                    }
-                                    else {
-                                        $("#myModal").modal("hide");
-                                        toastr.error("保存错误，请联系5613877！", "提示");
-                                    }
-                                });
+                                $("#myModal").modal("hide");
+                                toastr["error"](result, "提示");
                             }
                         });
                     }
-                }
-            });
+                });
+            }
+            else {
+                Ewin.confirm({ message: "确认要增加用户【" + $("#tbxUserName").val() + "】吗？" }).on(function (e) {
+                    if (!e) {
+                        return;
+                    }
+                    else {
+                        var userName = $("#tbxUserName").val();
+                        var userNum = $("#tbxUserNum").val();
+                        var userDuty = $("#tbxUserDuty").val();
+                        var userPhone = $("#tbxUserPhone").val();
+                        var userMobile = $("#tbxUserMobile").val();
+                        var userEmail = $("#tbxUserEmail").val();
+                        var userRemark = $("#tbxUserRemark").val();
+                        var deptID = $("#selectDeptID").text();//用户信息管理--当前部门隐藏ID
+
+                        
+                        var deptList = getTreeChecked();
+                        var roleList = {};
+                        $("input:checkbox[name='cbxRole']:checked").each(function (index, val) {
+                            roleList[index] = $(this).val();
+                        });
+                        var args = {
+                            "userName": userName,
+                            "userNum": userNum,
+                            "userDuty": userDuty,
+                            "userPhone": userPhone,
+                            "userMobile": userMobile,
+                            "userEmail": userEmail,
+                            "deptID": deptID,
+                            "userRemark": userRemark,
+                            "roleList": roleList,
+                            "deptList": deptList
+                        };
+                        console.log(args);
+                        $.post("/UserInfo/Insert", encodeURIComponent(JSON.stringify(args)), function (result) {
+                            if (result == "ok") {
+                                $("#myModal").modal("hide");
+                                toastr["success"]("添加用户【" + name + "】成功", "提示");
+                                $("#bsTable").bootstrapTable('refresh');
+                            }
+                            else {
+                                $("#myModal").modal("hide");
+                                toastr["error"]("保存错误，请联系5613877！" + result, "提示");
+                            }
+                        });
+                    }
+                });
+            }
         });
     });
 
