@@ -1,0 +1,187 @@
+﻿
+@{
+    ViewBag.Title = "物资质量反馈单类别";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-app="QualityTypeApp" ng-controller="QualityTypeCtrl">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModal-label">{{title}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form>
+                                <div class="form-group">
+                                    <label>物资质量类别</label>
+                                    <input class="form-control" ng-model="type.MaterialQualityTypeName" />
+                                </div>
+                                <span class="hidden">{{type.MaterialQualityTypeID}}</span>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" ng-click="save();">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title"></h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12 form-inline">
+                    <button class="btn btn-primary" ng-click="add();">
+                        <i class="glyphicon glyphicon-plus"></i> 新增
+                    </button>
+                    <div class="form-group">
+                        <label>类型名称</label>
+                        <input type="text" class="form-control" ng-model="searchTypeName" />
+                    </div>
+                    <button class="btn btn-default" ng-click="search();">
+                        <i class="glyphicon glyphicon-search"></i> 搜索
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>质量问题类别</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="type in types">
+                                <td>{{type.MaterialQualityTypeID}}</td>
+                                <td>{{type.MaterialQualityTypeName}}</td>
+                                <td>
+                                    <a href="javascript:void(0);" class="btn btn-info btn-sm" ng-click="edit(type);">
+                                        <i class="glyphicon glyphicon-edit"></i> 编辑
+                                    </a>
+                                    &nbsp;&nbsp;
+                                    <a href="javascript:void(0);" class="btn btn-danger btn-sm" ng-click="del(type.MaterialQualityTypeID);">
+                                        <i class="glyphicon glyphicon-remove"></i> 删除
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    angular.module("QualityTypeApp", []).controller("QualityTypeCtrl", function ($scope, $http) {
+        $scope.searchTypeName = "";//给搜索一个默认空值，如果不写，searchTypeName默认为undifind
+
+        GetList();
+        function GetList() {
+            var data = { "searchTypeName": $scope.searchTypeName };
+            $http.post("/MaterialQualityType/GetList",data,ngConfig).success(function (result) {
+                $scope.types = result;
+            });
+        };
+
+        $scope.search = function () {
+            GetList();
+        };
+
+        $scope.add = function () {
+            $("#myModal").modal("show");
+            $scope.type = null;
+            $scope.title = "添加";
+        };
+
+        $scope.save = function () {
+            if ($scope.type.MaterialQualityTypeID == null) {
+                Ewin.confirm({ message: "确认要添加信息吗？" }).on(function (e) {
+                    if (!e) {
+                        return;
+                    }
+                    else{
+                        var data = { "MaterialQualityTypeName": $scope.type.MaterialQualityTypeName };
+                        $http.post("/MaterialQualityType/Insert", data, ngConfig).success(function (result) {
+                            if (result == "ok") {
+                                $("#myModal").modal("hide");
+                                GetList();
+                                toastr.success("操作成功！", "提示");
+                            }
+                            else {
+                                toastr.error("保存错误，请联系5613877！", "提示");
+                            }
+
+                        });
+                    }
+                });
+            }
+            else {
+                Ewin.confirm({ message: "确认要修改信息吗？" }).on(function (e) {
+                    if (!e) {
+                        return;
+                    }
+                    else {
+                        var data = {
+                            "MaterialQualityTypeName": $scope.type.MaterialQualityTypeName,
+                            "MaterialQualityTypeID": $scope.type.MaterialQualityTypeID
+                        };
+                        $http.post("/MaterialQualityType/Update", data, ngConfig).success(function (result) {
+                            if (result=="ok") {
+                                $("#myModal").modal("hide");
+                                toastr.success("操作成功！", "提示");
+                            }
+                            else{
+                                toastr.error("保存错误，请联系5613877！", "提示");
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        $scope.edit = function (type) {
+            $scope.type = type;
+            $scope.title = "修改";
+            $("#myModal").modal("show");
+        };
+
+        $scope.del = function (id) {
+            Ewin.confirm({ message: "确认要删除信息吗？" }).on(function (e) {
+                if (!e) {
+                    return;
+                }
+                else {
+                    var data = {
+                        "MaterialQualityTypeID": id
+                    };
+                    $http.post("/MaterialQualityType/Del", data, ngConfig).success(function (result) {
+                        if (result == "ok") {
+                            GetList();
+                            toastr.success("操作成功！", "提示");
+                        }
+                        else {
+                            toastr.error("保存错误，请联系5613877！", "提示");
+                        }
+                    });
+                }
+            });
+        };
+    });
+</script>
+

@@ -14,13 +14,33 @@
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-horizontal">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="tbxTitle">反馈单名称(*)</label>
                                         <input type="text" class="form-control" name="tbxTitle" id="tbxTitle" placeholder="反馈单名称">
                                     </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="tbxTitle">供应商名称(*)</label>
+                                        <input type="text" class="form-control" name="tbxTitle" id="tbxTitle" placeholder="供应商名称">
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="tbxTitle">ERP计划预留号/物资编码</label>
+                                        <input type="text" class="form-control" name="tbxTitle" id="tbxTitle" placeholder="ERP计划预留号/物资编码">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="tbxTitle">物资质量问题类别(*)</label>
                                         <select class="form-control" id="ddlMaterialQualityType">
@@ -28,9 +48,20 @@
                                             <option>设备</option>
                                         </select>
                                     </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="tbxTitle">ERP订单号</label>
+                                        <input type="text" class="form-control" name="tbxTitle" id="tbxTitle" placeholder="ERP订单号">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="editor">问题内容(*)</label>
-                                        <script id="editor" type="text/plain" style="height:400px;">
+                                        <script id="editor" type="text/plain" style="height:300px;">
                                         </script>
                                     </div>
                                     <span class="hidden" id="NoticeID"></span>
@@ -41,7 +72,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="submit" id="btnSubmit" class="btn btn-primary">保存</button>
+                    <button type="button" id="btnSave" class="btn btn-info">保存</button>
+                    <button type="button" id="btnSubmit" class="btn btn-primary">提交</button>
                 </div>
             </div>
         </form>

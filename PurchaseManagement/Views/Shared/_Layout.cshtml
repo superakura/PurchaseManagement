@@ -25,6 +25,10 @@
             margin-top: -25px;
             margin-left: -150px;
         }
+        hr{
+            margin-top:5px;
+            margin-bottom:5px;
+        }
 
         label.error {
             color: red;
@@ -53,6 +57,7 @@
     <script src="~/dist/js/demo.js"></script>
     <script src="~/Scripts/toastr.min.js"></script>
     <script src="~/Scripts/Ewin.js"></script>
+    <script src="~/Scripts/angular.min.js"></script>
     <div class="wrapper">
         <!-- 顶端信息 -->
         <header class="main-header">
@@ -278,6 +283,17 @@
         <div class="control-sidebar-bg"></div>
 
         <script>
+            var ngConfig = {
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    transformRequest: function (obj) {
+                        var str = [];
+                        for (var p in obj) {
+                            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                        }
+                        return str.join("&");
+                    }
+                };
+
             //设置全局Ajax超时转跳
             $.ajaxSetup({
                 statusCode: {
@@ -341,6 +357,8 @@
                 var date = new Date(milliseconds);
                 return date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日';
             }
+
+
             $(document).ready(function () {
                 $('.sidebar-menu').tree();
 

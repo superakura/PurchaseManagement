@@ -7243,6 +7243,7 @@
     <Content Include="net\Bin\Newtonsoft.Json.pdb" />
     <Content Include="net\Bin\Newtonsoft.Json.xml" />
     <Content Include="net\net.sln" />
+    <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\bootstrap-paginator.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -7359,6 +7360,7 @@
     <Content Include="third-party\zeroclipboard\ZeroClipboard.swf" />
     <Content Include="ueditor.all.min.js" />
     <Content Include="ueditor.config.js" />
+    <Content Include="ng-js\CrudController.js" />
     <Content Include="Web.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
@@ -7373,6 +7375,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MaterialCodeController.cs" />
     <Compile Include="Controllers\MaterialQualityFeedbackController.cs" />
+    <Compile Include="Controllers\MaterialQualityTypeController.cs" />
     <Compile Include="Controllers\NoticeInfoController.cs" />
     <Compile Include="Controllers\RoleInfoController.cs" />
     <Compile Include="Controllers\TestController.cs" />
@@ -7408,10 +7411,26 @@
     <Compile Include="Migrations\201804030238120_edit5.Designer.cs">
       <DependentUpon>201804030238120_edit5.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804130035420_edit6.cs" />
+    <Compile Include="Migrations\201804130035420_edit6.Designer.cs">
+      <DependentUpon>201804130035420_edit6.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804160309506_edit7.cs" />
+    <Compile Include="Migrations\201804160309506_edit7.Designer.cs">
+      <DependentUpon>201804160309506_edit7.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804170119023_edit8.cs" />
+    <Compile Include="Migrations\201804170119023_edit8.Designer.cs">
+      <DependentUpon>201804170119023_edit8.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AuthorityInfo.cs" />
+    <Compile Include="Models\Crud.cs" />
     <Compile Include="Models\DB.cs" />
     <Compile Include="Models\DeptInfo.cs" />
+    <Compile Include="Models\Log.cs" />
+    <Compile Include="Models\MaterialQualityFeedback.cs" />
+    <Compile Include="Models\MaterialQualityType.cs" />
     <Compile Include="Models\NoticeInfo.cs" />
     <Compile Include="Models\RoleAuthority.cs" />
     <Compile Include="Models\RoleInfo.cs" />
@@ -7451,7 +7470,9 @@
     <Content Include="Views\MaterialQualityFeedback\accept.cshtml" />
     <Content Include="Views\MaterialQualityFeedback\Reply.cshtml" />
     <Content Include="Views\MaterialQualityFeedback\Statistic.cshtml" />
-    <Content Include="Views\MaterialQualityFeedback\MaterialQualityType.cshtml" />
+    <Content Include="Views\MaterialQualityType\Index.cshtml" />
+    <Content Include="Views\MaterialQualityFeedback\LeaderCheck.cshtml" />
+    <Content Include="Views\Test\AngularJsCrud.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -7487,6 +7508,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804030238120_edit5.resx">
       <DependentUpon>201804030238120_edit5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804130035420_edit6.resx">
+      <DependentUpon>201804130035420_edit6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804160309506_edit7.resx">
+      <DependentUpon>201804160309506_edit7.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804170119023_edit8.resx">
+      <DependentUpon>201804170119023_edit8.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

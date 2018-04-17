@@ -28,6 +28,10 @@
         public virtual DbSet<UserRole> UserRole { get; set; }//用户角色关系表
         public virtual DbSet<NoticeInfo> NoticeInfo { get; set; }//通知公告信息表
         public virtual DbSet<UserDept> UserDept { get; set; }//用户部门关系表
+        public virtual DbSet<Log> Log { get; set; }//日志信息表
+        public virtual DbSet<MaterialQualityFeedback> MaterialQualityFeedback { get; set; }//物质质量反馈表
+        public virtual DbSet<MaterialQualityType> MaterialQualityType { get; set; }//物质质量类型表
+        public virtual DbSet<Crud> Crud { get; set; }//Crud测试表
     }
 
     //public class MyEntity
