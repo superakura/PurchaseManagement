@@ -24,11 +24,9 @@ namespace PurchaseManagement.Models
         [StringLength(200)]
         public string SupplierName { get; set; }//供应商名称
 
-        [Required]
         [StringLength(200)]
         public string MaterialNum { get; set; }//ERP计划预留号/物资编码
 
-        [Required]
         [StringLength(200)]
         public string ErpOrderNum { get; set; }//ERP订单号
 
@@ -39,8 +37,15 @@ namespace PurchaseManagement.Models
         [Required]
         public int InputPersonID { get; set; }//提交人员ID
 
+        [Required]
         [StringLength(100)]
         public string InputPersonName { get; set; }//提交人员姓名
+
+        [StringLength(50)]
+        public string InputPersonPhone { get; set; }//提交人员联系方式固定电话
+
+        [StringLength(50)]
+        public string InputPersonMobile { get; set; }//提交人员联系方式移动
 
         [Required]
         public DateTime InputDateTime { get; set; } //提交时间
@@ -70,7 +75,7 @@ namespace PurchaseManagement.Models
         public DateTime? CheckDateTime { get; set; }//审核时间，可空类型
 
         //反馈单状态信息
-        //待提交、待接收、接收回退、回复完毕、回复回退、审核通过、审核回退、考核单已生成
+        //待提交、待接收、接收回退、接收完成、回复完毕、回复回退、审核通过、审核回退、考核单已生成
         [StringLength(50)]
         public string FeedBackState { get; set; }
         

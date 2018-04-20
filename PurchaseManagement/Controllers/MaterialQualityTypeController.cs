@@ -81,5 +81,11 @@ namespace PurchaseManagement.Controllers
                 return ex.Message;
             }
         }
+
+        [HttpPost]
+        public JsonResult GetListAll()
+        {
+            return Json(db.MaterialQualityType.ToList());
+        }
     }
 }

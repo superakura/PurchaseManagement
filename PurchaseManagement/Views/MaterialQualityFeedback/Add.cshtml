@@ -18,7 +18,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="tbxTitle">反馈单名称(*)</label>
+                                        <label for="tbxTitle">反馈单名称<span class="text-danger">(必填)</span></label>
                                         <input type="text" class="form-control" name="tbxTitle" id="tbxTitle" placeholder="反馈单名称">
                                     </div>
 
@@ -27,44 +27,41 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="form-group">
-                                        <label for="tbxTitle">供应商名称(*)</label>
-                                        <input type="text" class="form-control" name="tbxTitle" id="tbxTitle" placeholder="供应商名称">
+                                        <label for="tbxSupplierName">供应商名称<span class="text-danger">(必填)</span></label>
+                                        <input type="text" class="form-control" name="tbxSupplierName" id="tbxSupplierName" placeholder="供应商名称">
                                     </div>
                                 </div>
                                 <div class="col-md-2"></div>
                                 <div class="col-md-5">
                                     <div class="form-group">
-                                        <label for="tbxTitle">ERP计划预留号/物资编码</label>
-                                        <input type="text" class="form-control" name="tbxTitle" id="tbxTitle" placeholder="ERP计划预留号/物资编码">
+                                        <label class="text-info" for="tbxMaterialNum">ERP计划预留号/物资编码<span class="text-danger">(选填其中一个)</span></label>
+                                        <input type="text" class="form-control" name="tbxMaterialNum" id="tbxMaterialNum" placeholder="ERP计划预留号/物资编码">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="form-group">
-                                        <label for="tbxTitle">物资质量问题类别(*)</label>
-                                        <select class="form-control" id="ddlMaterialQualityType">
-                                            <option>化工</option>
-                                            <option>设备</option>
-                                        </select>
+                                        <label for="ddlMaterialQualityType">物资质量问题类别<span class="text-danger">(必填)</span></label>
+                                        <select class="form-control" id="ddlMaterialQualityType"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-2"></div>
                                 <div class="col-md-5">
                                     <div class="form-group">
-                                        <label for="tbxTitle">ERP订单号</label>
-                                        <input type="text" class="form-control" name="tbxTitle" id="tbxTitle" placeholder="ERP订单号">
+                                        <label class="text-info" for="tbxErpOrderNum">ERP订单号<span class="text-danger">(选填其中一个)</span></label>
+                                        <input type="text" class="form-control" name="tbxErpOrderNum" id="tbxErpOrderNum" placeholder="ERP订单号">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="editor">问题内容(*)</label>
+                                        <label for="editor">问题内容<span class="text-danger">(必填)</span></label>
                                         <script id="editor" type="text/plain" style="height:300px;">
                                         </script>
                                     </div>
-                                    <span class="hidden" id="NoticeID"></span>
+                                    <span class="hidden" id="InfoID"></span>
                                 </div>
                             </div>
                         </div>
@@ -72,8 +69,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" id="btnSave" class="btn btn-info">保存</button>
-                    <button type="button" id="btnSubmit" class="btn btn-primary">提交</button>
+                    <button type="button" id="btnSave" class="btn btn-info">
+                        <i class="glyphicon glyphicon-floppy-save"></i> 保存
+                    </button>
+                    <button type="button" id="btnSubmit" class="btn btn-primary">
+                        <i class="glyphicon glyphicon-ok"></i> 提交
+                    </button>
                 </div>
             </div>
         </form>
@@ -93,15 +94,25 @@
             <div class="col-md-12">
                 <form class="form-inline" role="form">
                     <div class="form-group">
-                        <label for="tbxAuthorityNameSearch">反馈单名称：</label>
-                        <input type="text" class="form-control" id="tbxAuthorityNameSearch" placeholder="反馈单名称">
+                        <label for="tbxTitleSearch">反馈单名称：</label>
+                        <input type="text" class="form-control" id="tbxTitleSearch" placeholder="反馈单名称">
                     </div>
                     <div class="form-group">
-                        <label for="ddlAuthorityTypeSearch">反馈单类别：</label>
-                        <select id="ddlAuthorityTypeSearch" class="form-control">
+                        <label for="ddlMaterialQualityTypeSearch">问题类别：</label>
+                        <select id="ddlMaterialQualityTypeSearch" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ddlMaterialQualityStateSearch">反馈单状态：</label>
+                        <select id="ddlMaterialQualityStateSearch" class="form-control">
                             <option value="">全部</option>
-                            <option value="设备">设备</option>
-                            <option value="化工">化工</option>
+                            <option value="待提交">待提交</option>
+                            <option value="待接收">待接收</option>
+                            <option value="接收完成">接收完成</option>
+                            <option value="接收回退">接收回退</option>
+                            <option value="回复完毕">回复完毕</option>
+                            <option value="回复回退">回复回退</option>
+                            <option value="审核通过">审核通过</option>
+                            <option value="审核回退">审核回退</option>
                         </select>
                     </div>
                     <button type="button" id="btnSearch" class="btn btn-primary">
@@ -129,178 +140,141 @@
     $(function () {
         var ue = UE.getEditor('editor');
 
-        //1.初始化Table
-        var oTable = new TableInit();
-        oTable.Init();
+        var operateEvents = {
+            'click .edit': function (e, value, row, index) {
+                if (row.FeedBackState == "待提交") {
+                    $("label.error").hide();
+                    $(".error").removeClass("error");
+                    $('#myModal').modal('show');
+                    $("#modalTitle").text("编辑信息");
 
-        //2.初始化Button的点击事件
-        var oButtonInit = new ButtonInit();
-        oButtonInit.Init();
-
-        $("#btnAdd").click(function () {
-            clearInfo();
-            $('#myModal').modal('show');
-            $("#modalTitle").text("添加质量反馈单");
-        });
-        function clearInfo() {
-            $("#tbxName,#tbxType,#tbxConflictCode,#tbxDescribe,#tbxMenuName,#tbxMenuIcon").val("");
-            $("#AuthorityID").text("");
-            $("label.error").hide();
-            $(".error").removeClass("error");
-        }
-
-        $("#btnSubmit").click(function () {
-            $("#formInfo").validate({
-                rules: {
-                    tbxType: { required: true, maxlength: 6, chinese: true },
-                    tbxDescribe: { maxlength: 20 },
-                    tbxName: { required: true, maxlength: 15 },
-                    tbxConflictCode: { number: true, max: 2 }
-                },
-                submitHandler: function (form) {
-                    if ($("#AuthorityID").text() != "") {
-                        Ewin.confirm({ message: "确认要修改权限信息吗？" }).on(function (e) {
-                            if (!e) {
-                                return;
-                            }
-                            else {
-                                var name = $("#tbxName").val();
-                                var type = $("#ddlType").val();
-                                var code = $("#tbxConflictCode").val();
-                                var desc = $("#tbxDescribe").val();
-                                var menuName = $("#tbxMenuName").val();
-                                var menuIcon = $("#tbxMenuIcon").val();
-                                var url = $("#tbxMenuUrl").val();
-                                var fatherID = $("#tbxMenuFatherName").val();
-                                var order = $("#tbxMenuOrder").val();
-
-                                var id = $("#AuthorityID").text();
-
-                                var args = {
-                                    "id": id,
-                                    "name": name,
-                                    "menuName": menuName,
-                                    "menuIcon": menuIcon,
-                                    "type": type,
-                                    "code": code,
-                                    "desc": desc,
-                                    "url": url,
-                                    "fatherID": fatherID,
-                                    "order": order
-                                };
-
-                                $.post("/AuthorityInfo/Update", encodeURIComponent(JSON.stringify(args)), function (result) {
-                                    if (result == "ok") {
-                                        $("#myModal").modal("hide");
-                                        toastr["success"]("修改权限成功", "提示");
-                                        clearInfo();
-                                        $("#bsTable").bootstrapTable('refresh');
-                                    }
-                                    else {
-                                        $("#myModal").modal("hide");
-                                        toastr["error"]("保存错误，请联系5613877！", "提示");
-                                    }
-                                });
-                            }
-                        });
-                    }
-                    else {
-                        Ewin.confirm({ message: "确认要增加权限【" + $("#tbxName").val() + "】吗？" }).on(function (e) {
-                            if (!e) {
-                                return;
-                            }
-                            else {
-                                var name = $("#tbxName").val();
-                                var type = $("#ddlType").val();
-                                var code = $("#tbxConflictCode").val();
-                                var desc = $("#tbxDescribe").val();
-                                var url = $("#tbxMenuUrl").val();
-                                var fatherID = $("#tbxMenuFatherName").val();
-                                var menuName = $("#tbxMenuName").val();
-                                var menuIcon = $("#tbxMenuIcon").val();
-                                var order = $("#tbxMenuOrder").val();
-
-                                var args = {
-                                    "name": name,
-                                    "menuName": menuName,
-                                    "menuIcon": menuIcon,
-                                    "type": type,
-                                    "code": code,
-                                    "desc": desc,
-                                    "url": url,
-                                    "fatherID": fatherID,
-                                    "order": order
-                                };
-
-                                $.post("/AuthorityInfo/Insert", encodeURIComponent(JSON.stringify(args)), function (result) {
-                                    if (result == "ok") {
-                                        $("#myModal").modal("hide");
-                                        toastr.success("添加权限【" + name + "】成功", "提示");
-                                        clearInfo();
-                                        $("#bsTable").bootstrapTable('refresh');
-                                    }
-                                    else {
-                                        $("#myModal").modal("hide");
-                                        toastr.error("保存错误，请联系5613877！", "提示");
-                                    }
-                                });
-                            }
-                        });
-                    }
+                    $("#tbxMaterialNum").val(row.MaterialNum);//物资编码
+                    $("#tbxErpOrderNum").val(row.ErpOrderNum);//erp订单号
+                    $("#tbxTitle").val(row.FeedbackTitle);//反馈单标题
+                    $("#tbxSupplierName").val(row.SupplierName);//供应商名称
+                    $("#InfoID").text(row.ID);//供应商名称
+                    UE.getEditor("editor").setContent(row.FeedbackContent);
+                    $("#ddlMaterialQualityType ").val(row.MaterialQualityTypeID);
                 }
-            });
-        });
-    });
+                else
+                {
+                    toastr.warning("只能修改【待提交】信息！", "提示");
+                }
+            },
+            'click .remove': function (e, value, row, index) {
+                if (row.FeedBackState == "待提交" || row.FeedBackState == "接收回退") {
+                    Ewin.confirm({ message: "确认要删除吗？" }).on(function (e) {
+                        if (!e) {
+                            return;
+                        }
+                        //写服务器后台删除方法,成功后执行页面删除数据
+                        var args = { "feedbackID": row.ID };
+                        $.post("/MaterialQualityFeedback/Del", encodeURIComponent(JSON.stringify(args)), function (result) {
+                            if (result == "ok") {
+                                //后台删除成功后，调用前台删除方法
+                                $('#bsTable').bootstrapTable('remove', {
+                                    field: 'ID',
+                                    values: [row.ID]
+                                });
+                                toastr.success("删除成功！", "提示")
+                            }
+                            else {
+                                toastr.error("保存错误，请联系5613877！", "提示");
+                            }
+                        });
 
-    var TableInit = function () {
-        var oTableInit = new Object();
+                    });
+                }
+                else {
+                    toastr.warning("只能删除【待提交】或【接收回退】信息！", "提示");
+                }
+            }
+        };
+        function operateFormatter(value, row, index) {
+            return [
+                '<a class="edit" href="javascript:void(0)" title="edit">',
+                '<i class="glyphicon glyphicon-pencil"></i>',
+                '</a>  ',
+                '<a class="remove" href="javascript:void(0)" title="remove">',
+                '<i class="glyphicon glyphicon-trash"></i>',
+                '</a>'
+            ].join('&nbsp;&nbsp;');
+        }
         var columns = [
             {
                 checkbox: true
             },
             {
-                field: 'AuthorityID',
-                title: 'ID编号'
+                title: '序号',
+                formatter: function (value, row, index) {
+                    return index + 1;
+                }
             },
             {
-                field: 'AuthorityName',
+                field: 'ID',
+                title: '数据ID',
+                visible: false,//false表示不显示
+            },
+            {
+                field: 'FeedbackTitle',
                 title: '反馈单名称'
             },
             {
-                field: 'AuthorityDescribe',
+                field: 'SupplierName',
+                title: '供应商名称',
+                visible:false
+            },
+            {
+                field: 'MaterialQualityTypeName',
                 title: '质量问题类别'
             },
             {
-                field: 'AuthorityType',
+                field: 'DeptName',
                 title: '提报部门'
             },
             {
-                field: 'AuthorityType',
-                title: '提报人'
+                field: 'InputPersonName',
+                title: '提报人',
+                formatter: function (value, row, index) {
+                    var person = "<a href='#' data-toggle='tooltip' data-placement='top' title='联系方式：" + row["InputPersonPhone"] + '/' + row["InputPersonMobile"] + "'>" + value + "</a>";
+                    return person;
+                }
             },
             {
-                field: 'ConflictCode',
-                title: '提报时间'
+                field: 'InputDateTime',
+                title: '提报时间',
+                formatter: function (value, row, index) {
+                    return getJsonDateTime(value)
+                }
             },
             {
-                field: 'MenuUrl',
-                title: '回复人'
-            },
-            {
-                field: 'MenuOrder',
-                title: '回复时间'
-            },
-            {
-                field: 'MenuFatherID',
+                field: 'CheckPersonName',
                 title: '接收人'
             },
             {
-                field: 'MenuIcon',
+                field: 'CheckDateTime',
                 title: '接收时间'
             },
             {
-                field: 'MenuName',
-                title: '反馈单状态'
+                field: 'ReplyPersonName',
+                title: '回复人'
+            },
+            {
+                field: 'ReplyDateTime',
+                title: '回复时间'
+            },
+            {
+                field: 'FeedBackState',
+                title: '反馈单状态',
+                formatter: function (value, row, index) {
+                    if (row['FeedBackState'] == "待提交") {
+                        return '<span class="label label-warning">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "待接收") {
+                        return '<span class="label label-info">' + value + '</span>';
+                    }
+                    return value;
+                }
             },
             {
                 field: 'operate',
@@ -309,119 +283,291 @@
                 events: operateEvents,
                 formatter: operateFormatter
             }];
-        //初始化Table
-        oTableInit.Init = function () {
-            $('#bsTable').bootstrapTable({
-                url: '/MaterialQualityFeedback/GetList',         //请求后台的URL（*）
-                contentType: 'application/x-www-form-urlencoded',
-                method: 'post',                     //请求方式（*）
-                toolbar: '#toolbar',                //工具按钮用哪个容器
-                striped: true,                      //是否显示行间隔色
-                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
-                pagination: true,                   //是否显示分页（*）
-                sortable: false,                     //是否启用排序
-                sortOrder: "asc",                   //排序方式
-                queryParams: oTableInit.queryParams,//传递参数（*）
-                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
-                pageNumber: 1,                       //初始化加载第一页，默认第一页
-                pageSize: 10,                       //每页的记录行数（*）
-                pageList: [10, 15, 20, 25],        //可供选择的每页的行数（*）
-                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
-                strictSearch: true,
-                showColumns: true,                  //是否显示所有的列
-                showRefresh: true,                  //是否显示刷新按钮
-                minimumCountColumns: 2,             //最少允许的列数
-                clickToSelect: false,                //是否启用点击选中行
-                height: 600,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
-                uniqueId: "AuthorityID",                     //每一行的唯一标识，一般为主键列
-                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
-                cardView: false,                    //是否显示详细视图
-                detailView: false,                   //是否显示父子表
-                paginationPreText: "上一页",
-                paginationNextText: "下一页",
-                showExport: false,                     //是否显示导出
-                columns: columns
-            });
-        };
-
-        //得到查询的参数
-        oTableInit.queryParams = function (params) {
+        var queryParams = function (params) {
             var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
                 limit: params.limit,   //页面大小
                 offset: params.offset,  //页码
-                authorityName: $("#tbxAuthorityNameSearch").val(),
-                authorityType: $("#ddlAuthorityTypeSearch").val()
+                feedbackTitle: $("#tbxTitleSearch").val(),
+                materialQualityTypeID: $("#ddlMaterialQualityTypeSearch").val(),
+                materialQualityState: $("#ddlMaterialQualityStateSearch").val()
             };
             return temp;
         };
-        return oTableInit;
-    };
-    window.operateEvents = {
-        'click .edit': function (e, value, row, index) {
-            //alert('You click like action, row: ' + JSON.stringify(row));
-            //console.log(row.AuthorityID);
-            $("label.error").hide();
-            $(".error").removeClass("error");
-            $('#myModal').modal('show');
-            $("#modalTitle").text("编辑权限信息");
-            $("#AuthorityID").text(row.AuthorityID);
-            var args = { "id": row.AuthorityID };
-            $.post("/AuthorityInfo/GetOne", encodeURIComponent(JSON.stringify(args)), function (result) {
-                $("#tbxName").val(result["AuthorityName"]);
-                $("#ddlType").val(result["AuthorityType"]);
-                $("#tbxDescribe").val(result["AuthorityDescribe"]);
-                $("#tbxConflictCode").val(result["ConflictCode"]);
-                $("#tbxMenuUrl").val(result["MenuUrl"]);
-                $("#tbxMenuFatherName").val(result["MenuFatherID"]);
-                $("#tbxMenuOrder").val(result["MenuOrder"]);
-                $("#tbxMenuName").val(result["MenuName"]);
-                $("#tbxMenuIcon").val(result["MenuIcon"]);
-            });
-        },
-        'click .remove': function (e, value, row, index) {
-            Ewin.confirm({ message: "确认要删除【" + row.AuthorityName + "】吗？" }).on(function (e) {
-                if (!e) {
-                    return;
-                }
-                //写服务器后台删除方法,成功后执行页面删除数据
-                var args = { "id": row.AuthorityID };
-                $.post("/AuthorityInfo/Del", encodeURIComponent(JSON.stringify(args)), function (result) {
-                    if (result == "ok") {
-                        //后台删除成功后，调用前台删除方法
-                        $('#bsTable').bootstrapTable('remove', {
-                            field: 'AuthorityID',
-                            values: [row.AuthorityID]
-                        });
-                        toastr.success("删除【" + row.AuthorityName + "】成功！", "提示")
-                    }
-                    else {
-                        toastr.error("保存错误，请联系5613877！", "提示");
-                    }
+
+        //初始化BS-Table
+        $('#bsTable').bootstrapTable({
+            url: '/MaterialQualityFeedback/GetList',         //请求后台的URL（*）
+            contentType: 'application/x-www-form-urlencoded',
+            method: 'post',                     //请求方式（*）
+            toolbar: '#toolbar',                //工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,                   //是否显示分页（*）
+            sortable: false,                     //是否启用排序
+            sortOrder: "asc",                   //排序方式
+            queryParams: queryParams,           //传递参数（*）
+            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber: 1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                       //每页的记录行数（*）
+            pageList: [5, 10, 15, 20],        //可供选择的每页的行数（*）
+            search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            strictSearch: true,
+            showColumns: true,                  //是否显示所有的列
+            showRefresh: true,                  //是否显示刷新按钮
+            minimumCountColumns: 2,             //最少允许的列数
+            clickToSelect: false,                //是否启用点击选中行
+            //height: 600,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+            showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                   //是否显示父子表
+            paginationPreText: "上一页",
+            paginationNextText: "下一页",
+            showExport: false,                     //是否显示导出
+            columns: columns
+        })
+        .on('all.bs.table', function (e, name, args) {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        //搜索按钮
+        $("#btnSearch").click(function () {
+            $("#bsTable").bootstrapTable('refresh');
+        });
+
+        //搜索加载质量问题类型函数
+        LoadProblemTypeSearch();
+        function LoadProblemTypeSearch() {
+            $.post("/MaterialQualityType/GetListAll", "", function (result) {
+                var list = "";
+                $.each(result, function (indexInArray, valueOfElement) {
+                    list += "<option value='" + valueOfElement["MaterialQualityTypeID"] + "'>" + valueOfElement["MaterialQualityTypeName"] + "</option>";
                 });
-
-            });
-        }
-    };
-    function operateFormatter(value, row, index) {
-        return [
-            '<a class="edit" href="javascript:void(0)" title="edit">',
-            '<i class="glyphicon glyphicon-pencil"></i>',
-            '</a>  ',
-            '<a class="remove" href="javascript:void(0)" title="Remove">',
-            '<i class="glyphicon glyphicon-trash"></i>',
-            '</a>'
-        ].join('&nbsp;&nbsp;');
-    }
-    var ButtonInit = function () {
-        var oInit = new Object();
-
-        oInit.Init = function () {
-            //初始化页面上面的按钮事件
-            $("#btnSearch").click(function () {
-                $("#bsTable").bootstrapTable('refresh');
+                $("#ddlMaterialQualityTypeSearch").empty().append(list).prepend("<option value=''>全部</option>").val(0);
             });
         };
 
-        return oInit;
-    };
+        //表单加载质量问题类型函数
+        LoadProblemType();
+        function LoadProblemType() {
+            $.post("/MaterialQualityType/GetListAll", "", function (result) {
+                var list = "";
+                $.each(result, function (indexInArray, valueOfElement) {
+                    list += "<option value='" + valueOfElement["MaterialQualityTypeID"] + "'>" + valueOfElement["MaterialQualityTypeName"] + "</option>";
+                });
+                $("#ddlMaterialQualityType").empty().append(list);
+            });
+        };
+
+        //添加按钮
+        $("#btnAdd").click(function () {
+            clearInfo();
+            $('#myModal').modal('show');
+            $("#modalTitle").text("添加质量反馈单");
+        });
+
+        //清空myModal表单函数
+        function clearInfo() {
+            $("#tbxTitle,#tbxSupplierName,#tbxMaterialNum,#tbxErpOrderNum").val("");
+            UE.getEditor("editor").setContent("");
+            $("#InfoID").text("");
+            $("label.error").hide();
+            $(".error").removeClass("error");
+        }
+
+        //对申请表单进行前端验证
+        var valid = $("#formInfo").validate({
+            rules: {
+                tbxTitle: { required: true, maxlength: 30 },
+                tbxSupplierName: { required: true, maxlength: 30 }
+            }
+        });
+
+        //提交按钮
+        $("#btnSubmit").click(function () {
+            if (valid.form()) {
+                var contentCount = UE.getEditor("editor").getContentLength(true);//问题描述的内容长度
+                var materialNum = $("#tbxMaterialNum").val();//物资编码
+                var erpOrderNum = $("#tbxErpOrderNum").val();//erp订单号
+                if (materialNum!=""||erpOrderNum!="") {
+                    if (contentCount > 0) {
+                        if ($("#InfoID").text() != "") {
+                            //保存后提交
+                            Ewin.confirm({ message: "确定要提交吗？" }).on(function (e) {
+                                if (!e) {
+                                    return;
+                                }
+                                else {
+                                    var feedbackTitle = $("#tbxTitle").val();
+                                    var supplierName = $("#tbxSupplierName").val();
+                                    var materialQualityTypeID = $("#ddlMaterialQualityType").val();
+                                    var feedbackContent = UE.getEditor("editor").getContent();
+                                    var clickState = "提交";
+                                    var feedbackID = $("#InfoID").text();
+
+                                    var args = {
+                                        "feedbackID": feedbackID,
+                                        "feedbackTitle": feedbackTitle,
+                                        "supplierName": supplierName,
+                                        "materialQualityTypeID": materialQualityTypeID,
+                                        "materialNum": materialNum,
+                                        "erpOrderNum": erpOrderNum,
+                                        "feedbackContent": feedbackContent,
+                                        "clickState": clickState
+                                    };
+                                    $.post("/MaterialQualityFeedback/Update", encodeURIComponent(JSON.stringify(args)), function (result) {
+                                        if (result == "ok") {
+                                            $("#myModal").modal("hide");
+                                            toastr.success("操作成功！", "提示");
+                                            $("#bsTable").bootstrapTable('refresh');
+                                        }
+                                        else {
+                                            $("#myModal").modal("hide");
+                                            toastr.error("系统错误，请联系5613877！", "提示");
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            //直接提交
+                            Ewin.confirm({ message: "确认要提交吗？" }).on(function (e) {
+                                if (!e) {
+                                    return;
+                                }
+                                else {
+                                    var feedbackTitle = $("#tbxTitle").val();
+                                    var supplierName = $("#tbxSupplierName").val();
+                                    var materialQualityTypeID = $("#ddlMaterialQualityType").val();
+                                    var feedbackContent = UE.getEditor("editor").getContent();
+                                    var clickState = "提交";
+
+                                    var args = {
+                                        "feedbackTitle": feedbackTitle,
+                                        "supplierName": supplierName,
+                                        "materialQualityTypeID": materialQualityTypeID,
+                                        "materialNum": materialNum,
+                                        "erpOrderNum": erpOrderNum,
+                                        "feedbackContent": feedbackContent,
+                                        "clickState": clickState
+                                    };
+                                    $.post("/MaterialQualityFeedback/Insert", encodeURIComponent(JSON.stringify(args)), function (result) {
+                                        if (result == "ok") {
+                                            $("#myModal").modal("hide");
+                                            toastr.success("操作成功！", "提示");
+                                            $("#bsTable").bootstrapTable('refresh');
+                                        }
+                                        else {
+                                            $("#myModal").modal("hide");
+                                            toastr.error("系统错误，请联系5613877！", "提示");
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        toastr.error("问题内容必须填写！", "提示");
+                    }
+                }
+                else
+                {
+                    toastr.error("【ERP计划预留号/物资编码】或【ERP订单号】必须填写一个！", "提示");
+                }
+            };
+        });
+
+        //保存按钮
+        $("#btnSave").click(function () {
+            if (valid.form()) {
+                var contentCount = UE.getEditor("editor").getContentLength(true);//问题描述的内容长度
+                var materialNum = $("#tbxMaterialNum").val();//物资编码
+                var erpOrderNum = $("#tbxErpOrderNum").val();//erp订单号
+                if (materialNum != "" || erpOrderNum != "") {
+                    if (contentCount > 0) {
+                        if ($("#InfoID").text() != "") {
+                            //修改已存在的信息update
+                            Ewin.confirm({ message: "确定要保存吗？" }).on(function (e) {
+                                if (!e) {
+                                    return;
+                                }
+                                else {
+                                    var feedbackTitle = $("#tbxTitle").val();
+                                    var supplierName = $("#tbxSupplierName").val();
+                                    var materialQualityTypeID = $("#ddlMaterialQualityType").val();
+                                    var feedbackContent = UE.getEditor("editor").getContent();
+                                    var feedbackID = $("#InfoID").text();
+                                    var clickState = "保存";
+
+                                    var args = {
+                                        "feedbackID": feedbackID,
+                                        "feedbackTitle": feedbackTitle,
+                                        "supplierName": supplierName,
+                                        "materialQualityTypeID": materialQualityTypeID,
+                                        "materialNum": materialNum,
+                                        "erpOrderNum": erpOrderNum,
+                                        "clickState": clickState,
+                                        "feedbackContent": feedbackContent
+                                    };
+                                    $.post("/MaterialQualityFeedback/Update", encodeURIComponent(JSON.stringify(args)), function (result) {
+                                        if (result == "ok") {
+                                            $("#myModal").modal("hide");
+                                            toastr.success("操作成功！", "提示");
+                                            $("#bsTable").bootstrapTable('refresh');
+                                        }
+                                        else {
+                                            $("#myModal").modal("hide");
+                                            toastr.error("系统错误，请联系5613877！", "提示");
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            //第一次保存信息insert
+                            Ewin.confirm({ message: "确定要保存吗？" }).on(function (e) {
+                                if (!e) {
+                                    return;
+                                }
+                                else {
+                                    var feedbackTitle = $("#tbxTitle").val();
+                                    var supplierName = $("#tbxSupplierName").val();
+                                    var materialQualityTypeID = $("#ddlMaterialQualityType").val();
+                                    var feedbackContent = UE.getEditor("editor").getContent();
+                                    var clickState = "保存";
+
+                                    var args = {
+                                        "feedbackTitle": feedbackTitle,
+                                        "supplierName": supplierName,
+                                        "materialQualityTypeID": materialQualityTypeID,
+                                        "materialNum": materialNum,
+                                        "erpOrderNum": erpOrderNum,
+                                        "feedbackContent": feedbackContent,
+                                        "clickState": clickState
+                                    };
+                                    $.post("/MaterialQualityFeedback/Insert", encodeURIComponent(JSON.stringify(args)), function (result) {
+                                        if (result == "ok") {
+                                            $("#myModal").modal("hide");
+                                            toastr.success("操作成功！", "提示");
+                                            $("#bsTable").bootstrapTable('refresh');
+                                        }
+                                        else {
+                                            $("#myModal").modal("hide");
+                                            toastr.error("系统错误，请联系5613877！", "提示");
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        toastr.error("问题内容必须填写！", "提示");
+                    }
+                }
+                else {
+                    toastr.error("【ERP计划预留号/物资编码】或【ERP订单号】必须填写一个！", "提示");
+                }
+            };
+        });
+    });
 </script>
