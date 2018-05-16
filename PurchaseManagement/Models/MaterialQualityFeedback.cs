@@ -67,6 +67,9 @@ namespace PurchaseManagement.Models
 
         public DateTime? ReplyDateTime { get; set; }//回复时间，可空类型
 
+        [StringLength(1000)]
+        public string ReplyContent { get; set; }//回复内容
+
         public int CheckPersonID { get; set; }//审核人员ID
 
         [StringLength(100)]

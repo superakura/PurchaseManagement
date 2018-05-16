@@ -1,8 +1,359 @@
 ﻿
 @{
-    ViewBag.Title = "LeaderCheck";
+    ViewBag.Title = "物资质量反馈领导审核";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>LeaderCheck</h2>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-lg">
+        <form id="formInfo">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h5 class="modal-title" id="modalTitle">质量反馈领导审核</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        @Html.Partial("FeedBackInfo")
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-horizontal">
+                                    <label>回退原因</label>
+                                    <textarea id="tbxBackReason" rows="1" cols="30" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" id="btnBack" class="btn btn-danger">回退</button>
+                    <button type="button" id="btnCheck" class="btn btn-primary">通过</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="box box-danger">
+    <div class="box-header">
+        <h3 class="box-title">物资质量反馈领导审核</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form-inline" role="form">
+                    <div class="form-group">
+                        <label for="tbxTitleSearch">反馈单名称：</label>
+                        <input type="text" class="form-control" placeholder="反馈单名称">
+                    </div>
+                    <div class="form-group">
+                        <label for="ddlMaterialQualityTypeSearch">问题类别：</label>
+                        <select id="ddlMaterialQualityTypeSearch" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ddlMaterialQualityStateSearch">反馈单状态：</label>
+                        <select id="ddlMaterialQualityStateSearch" class="form-control">
+                            <option value="">全部</option>
+                            <option value="待提交">待提交</option>
+                            <option value="待接收">待接收</option>
+                            <option value="接收完成">接收完成</option>
+                            <option value="接收回退">接收回退</option>
+                            <option value="回复完毕">回复完毕</option>
+                            <option value="回复回退">回复回退</option>
+                            <option value="审核通过">审核通过</option>
+                            <option value="审核回退">审核回退</option>
+                        </select>
+                    </div>
+                    <button type="button" id="btnSearch" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-search"></span> 查询
+                    </button>
+                </form>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <table id="bsTable"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var operateEvents = {
+        'click .btnInfoShow': function (e, value, row, index) {
+            $('#myModal').modal('show');
+            $("#modalTitle").text("质量反馈信息");
+            $("#lblFeedbackTitle").text(row["FeedbackTitle"]);
+            $("#lblSupplierName").text(row["SupplierName"]);
+            $("#lblFeedbackType").text(row["MaterialQualityTypeName"]);
+            $("#lblFeedbackState").text(row["FeedBackState"]);
+            $("#lblErpOrderNum").text(row["ErpOrderNum"]);
+            $("#lblMaterialNum").text(row["MaterialNum"]);
+            $("#lblDeptName").text(row["DeptName"]);
+            $("#lblInputPerson").text(row["InputPersonName"]);
+            $("#lblInputPersonPhone").text(row["InputPersonPhone"] + '/' + row["InputPersonMobile"]);
+            $("#lblInputDate").text(getJsonDateTime(row["InputDateTime"]));
+            $("#lblReplyPersonName").text(row["ReplyPersonName"] == null ? "" : row["ReplyPersonName"]);
+
+            $("#lblFeedbackContent").html(row["FeedbackContent"]);
+            $("#lblReplyContent").html(row["ReplyContent"]);
+            if (row["ReplyContent"] == null) {
+                $("#panelReply").hide();
+                $("#replyContentInput").show();
+            }
+            else {
+                $("#panelReply").show();
+                $("#replyContentInput").hide();
+            }
+
+            $("#InfoID").text(row["ID"]);
+        }
+    };
+
+    function operateFormatter(value, row, index) {
+        return "<a class='btnInfoShow' href='javascript:void(0)'>"+value+"</a>";
+    }
+
+    var columns = [
+            {
+                checkbox: true
+            },
+            {
+                title: '序号',
+                formatter: function (value, row, index) {
+                    return index + 1;
+                }
+            },
+            {
+                field: 'ID',
+                title: '数据ID',
+                visible: false,//false表示不显示
+            },
+            {
+                field: 'FeedbackTitle',
+                title: '反馈单名称',
+                events: operateEvents,
+                formatter: operateFormatter
+            },
+            {
+                field: 'SupplierName',
+                title: '供应商名称',
+                visible:true
+            },
+            {
+                field: 'MaterialQualityTypeName',
+                title: '质量问题类别'
+            },
+            {
+                field: 'DeptName',
+                title: '提报部门'
+            },
+            {
+                field: 'InputPersonName',
+                title: '提报人',
+                formatter: function (value, row, index) {
+                    var person = "<a href='#' data-toggle='tooltip' data-placement='top' title='联系方式：" + row["InputPersonPhone"] + '/' + row["InputPersonMobile"] + "'>" + value + "</a>";
+                    return person;
+                }
+            },
+            {
+                field: 'InputDateTime',
+                title: '提报时间',
+                formatter: function (value, row, index) {
+                    return getJsonDateTime(value)
+                }
+            },
+            {
+                field: 'CheckPersonName',
+                title: '接收人',
+                visible: false,//false表示不显示
+            },
+            {
+                field: 'CheckDateTime',
+                title: '接收时间',
+                visible: false,//false表示不显示
+            },
+            {
+                field: 'ReplyPersonName',
+                title: '回复人'
+            },
+            {
+                field: 'ReplyDateTime',
+                title: '回复时间',
+                formatter: function (value, row, index) {
+                    if (value != null) {
+                        return getJsonDateTime(value);
+                    }
+                }
+            },
+            {
+                field: 'FeedBackState',
+                title: '反馈单状态',
+                formatter: function (value, row, index) {
+                    if (row['FeedBackState'] == "待提交") {
+                        return '<span class="label label-warning">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "待接收") {
+                        return '<span class="label label-info">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "接收完成") {
+                        return '<span class="label label-default">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "接收回退") {
+                        return '<span class="label label-danger">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "回复完毕") {
+                        return '<span class="label label-primary">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "审核通过") {
+                        return '<span class="label label-success">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "审核回退") {
+                        return '<span class="label label-danger">' + value + '</span>';
+                    }
+                    return value;
+                }
+            }];
+
+    var queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                limit: params.limit,   //页面大小
+                offset: params.offset,  //页码
+                feedbackTitle: $("#tbxTitleSearch").val(),
+                materialQualityTypeID: $("#ddlMaterialQualityTypeSearch").val(),
+                materialQualityState: $("#ddlMaterialQualityStateSearch").val()
+            };
+            return temp;
+    };
+
+    //初始化BS-Table
+    $('#bsTable').bootstrapTable({
+        url: '/MaterialQualityFeedback/GetList',         //请求后台的URL（*）
+        contentType: 'application/x-www-form-urlencoded',
+        method: 'post',                     //请求方式（*）
+        toolbar: '#toolbar',                //工具按钮用哪个容器
+        striped: true,                      //是否显示行间隔色
+        cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+        pagination: true,                   //是否显示分页（*）
+        sortable: false,                     //是否启用排序
+        sortOrder: "asc",                   //排序方式
+        queryParams: queryParams,           //传递参数（*）
+        sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+        pageNumber: 1,                       //初始化加载第一页，默认第一页
+        pageSize: 10,                       //每页的记录行数（*）
+        pageList: [5, 10, 15, 20],        //可供选择的每页的行数（*）
+        search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+        strictSearch: true,
+        showColumns: true,                  //是否显示所有的列
+        showRefresh: true,                  //是否显示刷新按钮
+        minimumCountColumns: 2,             //最少允许的列数
+        clickToSelect: false,                //是否启用点击选中行
+        //height: 600,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+        uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+        showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+        cardView: false,                    //是否显示详细视图
+        detailView: false,                   //是否显示父子表
+        paginationPreText: "上一页",
+        paginationNextText: "下一页",
+        showExport: false,                     //是否显示导出
+        columns: columns
+    })
+    .on('all.bs.table', function (e, name, args) {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    //搜索按钮
+    $("#btnSearch").click(function () {
+        $("#bsTable").bootstrapTable('refresh');
+    });
+
+    //搜索加载质量问题类型函数
+    LoadProblemTypeSearch();
+    function LoadProblemTypeSearch() {
+            $.post("/MaterialQualityType/GetListAll", "", function (result) {
+                var list = "";
+                $.each(result, function (indexInArray, valueOfElement) {
+                    list += "<option value='" + valueOfElement["MaterialQualityTypeID"] + "'>" + valueOfElement["MaterialQualityTypeName"] + "</option>";
+                });
+                $("#ddlMaterialQualityTypeSearch").empty().append(list).prepend("<option value=''>全部</option>").val(0);
+            });
+    };
+
+    $("#btnCheck").click(function () {
+        var state = $("#lblFeedbackState").text();
+        if (state == "回复完毕") {
+            Ewin.confirm({ message: "确定要通过吗？" }).on(function (e) {
+                if (!e) {
+                    return;
+                }
+                else {
+                    var feedBackID = $("#InfoID").text();
+
+                    var args = {
+                        "feedBackID": feedBackID
+                    };
+                    $.post("/MaterialQualityFeedback/CheckOk", encodeURIComponent(JSON.stringify(args)), function (result) {
+                        if (result == "ok") {
+                            $("#myModal").modal("hide");
+                            toastr.success("操作成功！", "提示");
+                            $("#bsTable").bootstrapTable('refresh');
+                        }
+                        else {
+                            $("#myModal").modal("hide");
+                            toastr.error("系统错误，请联系5613877！", "提示");
+                        }
+                    });
+                }
+            });
+        }
+        else {
+            toastr.warning("只有【回复完毕】状态的反馈单可执行接收操作！", "提示");
+        }
+
+    });
+
+    $("#btnBack").click(function () {
+        var state = $("#lblFeedbackState").text();
+        if (state == "回复完毕") {
+            var backReason = $("#tbxBackReason").val();
+            if (backReason!="") {
+                Ewin.confirm({ message: "确定要回退吗？" }).on(function (e) {
+                    if (!e) {
+                        return;
+                    }
+                    else {
+
+                        var feedBackID = $("#InfoID").text();
+                        var args = {
+                            "backReason": backReason,
+                            "feedBackID": feedBackID
+                        };
+                        $.post("/MaterialQualityFeedback/CheckBack", encodeURIComponent(JSON.stringify(args)), function (result) {
+                            if (result == "ok") {
+                                $("#myModal").modal("hide");
+                                toastr.success("操作成功！", "提示");
+                                $("#bsTable").bootstrapTable('refresh');
+                            }
+                            else {
+                                $("#myModal").modal("hide");
+                                toastr.error("系统错误，请联系5613877！", "提示");
+                            }
+                        });
+                    }
+                });
+            }
+            else {
+                toastr.error("回退原因必须填写！", "提示");
+            }
+        }
+        else{
+            toastr.warning("只有【回复完毕】状态的反馈单可执行回退操作！", "提示");
+        }
+    });
+</script>
 

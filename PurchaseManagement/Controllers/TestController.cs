@@ -25,6 +25,16 @@ namespace PurchaseManagement.Controllers
             return View();
         }
 
+        public ViewResult NgBsTable()
+        {
+            return View();
+        }
+
+        public ViewResult NgBsTableDB()
+        {
+            return View();
+        }
+
         public JsonResult List()
         {
             return Json(db.Crud.ToList(), JsonRequestBehavior.AllowGet);

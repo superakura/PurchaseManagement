@@ -87,55 +87,52 @@ namespace PurchaseManagement.Controllers
         {
             //判断员工编号是否为系统用户、判断用户是否删除
             var userInfo = db.UserInfo.Where(w => w.UserNum == userNum & w.UserState == 0).FirstOrDefault();
-            if (userInfo != null)
+            if (userInfo == null)
             {
-                //将用户的全部信息存入session，便于在其他页面调用
-                System.Web.HttpContext.Current.Session["user"] = userInfo;
+                ModelState.AddModelError("", "您还不是此系统用户，如有疑问请联系管理员，电话5613877！");
+                return View();
+            }
+            //将用户的全部信息存入session，便于在其他页面调用
+            System.Web.HttpContext.Current.Session["user"] = userInfo;
 
-                //通过考勤数据库验证员工编号、考勤密码
-                var result = "yes";
-                result = KaoqinCheck(userNum, pwd);//系统测试时，注释
+            //通过考勤数据库验证员工编号、考勤密码
+            var result = "yes";
+            //result = KaoqinCheck(userNum, pwd);//系统测试时，注释
 
-                if (result == "yes")
+            if (result == "yes")
+            {
+                #region 加载、设置用户权限
+                var userRoles = from u in db.UserRole
+                                join r in db.RoleAuthority on u.RoleID equals r.RoleID
+                                join a in db.AuthorityInfo on r.AuthorityID equals a.AuthorityID
+                                where u.UserID == userInfo.UserID
+                                select a.AuthorityName;
+
+                var roles = userRoles.Distinct().ToArray();
+                var userAuthorityString = "";
+                foreach (var item in roles)
                 {
-                    #region 加载、设置用户权限
-                    var userRoles = from u in db.UserRole
-                                    join r in db.RoleAuthority on u.RoleID equals r.RoleID
-                                    join a in db.AuthorityInfo on r.AuthorityID equals a.AuthorityID
-                                    where u.UserID == userInfo.UserID
-                                    select a.AuthorityName;
-
-                    var roles = userRoles.Distinct().ToArray();
-                    var userAuthorityString = "";
-                    foreach (var item in roles)
-                    {
-                        userAuthorityString += item + ",";
-                    }
-                    userAuthorityString = userAuthorityString.Substring(0, userAuthorityString.Length - 1);
-
-                    FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(1, userNum, DateTime.Now, DateTime.Now.AddMinutes(20), false, userAuthorityString);//写入用户角色
-                    string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-                    System.Web.HttpCookie authCookie = new System.Web.HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-                    System.Web.HttpContext.Current.Response.Cookies.Add(authCookie);
-                    #endregion
-
-                    #region 设置用户姓名的cookie
-                    var cUserName = System.Web.HttpContext.Current.Server.UrlEncode(userInfo.UserName);
-                    System.Web.HttpCookie userNameCookie = new System.Web.HttpCookie("cUserName", cUserName);
-                    System.Web.HttpContext.Current.Response.Cookies.Add(userNameCookie);
-                    #endregion
-
-                    return Redirect(returnUrl ?? Url.Action("Index", "Home"));
+                    userAuthorityString += item + ",";
                 }
-                else
-                {
-                    ModelState.AddModelError("", "用户名或密码错误！");
-                    return View();
-                }
+                userAuthorityString = userAuthorityString.Substring(0, userAuthorityString.Length - 1);
+
+                FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(1, userNum, DateTime.Now, DateTime.Now.AddMinutes(20), false, userAuthorityString);//写入用户角色
+                string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+                System.Web.HttpCookie authCookie = new System.Web.HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                System.Web.HttpContext.Current.Response.Cookies.Add(authCookie);
+                #endregion
+
+                #region 设置用户姓名的cookie
+                var cUserName = System.Web.HttpContext.Current.Server.UrlEncode(userInfo.UserName);
+                System.Web.HttpCookie userNameCookie = new System.Web.HttpCookie("cUserName", cUserName);
+                System.Web.HttpContext.Current.Response.Cookies.Add(userNameCookie);
+                #endregion
+
+                return Redirect(returnUrl ?? Url.Action("Index", "Home"));
             }
             else
             {
-                ModelState.AddModelError("", "您还不是此系统用户，如有疑问请联系管理员，电话5613877！");
+                ModelState.AddModelError("", "用户名或密码错误！");
                 return View();
             }
         }

@@ -7439,6 +7439,10 @@
     <Compile Include="Migrations\201804190040121_edit12.Designer.cs">
       <DependentUpon>201804190040121_edit12.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805090722476_edit13.cs" />
+    <Compile Include="Migrations\201805090722476_edit13.Designer.cs">
+      <DependentUpon>201805090722476_edit13.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AuthorityInfo.cs" />
     <Compile Include="Models\Crud.cs" />
@@ -7489,6 +7493,9 @@
     <Content Include="Views\MaterialQualityType\Index.cshtml" />
     <Content Include="Views\MaterialQualityFeedback\LeaderCheck.cshtml" />
     <Content Include="Views\Test\AngularJsCrud.cshtml" />
+    <Content Include="Views\MaterialQualityFeedback\FeedBackInfo.cshtml" />
+    <Content Include="Views\Test\NgBsTable.cshtml" />
+    <Content Include="Views\Test\NgBsTableDB.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -7545,6 +7552,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804190040121_edit12.resx">
       <DependentUpon>201804190040121_edit12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805090722476_edit13.resx">
+      <DependentUpon>201805090722476_edit13.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

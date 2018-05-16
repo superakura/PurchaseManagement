@@ -3,7 +3,26 @@
     ViewBag.Title = "质量反馈单提报";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<div class="modal fade" id="showModal">
+    <div class="modal-dialog modal-lg">
+        <form id="formInfo">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h5 class="modal-title">质量反馈单信息</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        @Html.Partial("FeedBackInfo")
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="modal fade" id="myModal">
     <div class="modal-dialog modal-lg">
         <form id="formInfo">
@@ -200,6 +219,47 @@
                 '</a>'
             ].join('&nbsp;&nbsp;');
         }
+
+        var operateEventTitle = {
+            'click .btnInfoShow': function (e, value, row, index) {
+                $('#showModal').modal('show');
+                $("#lblFeedbackTitle").text(row["FeedbackTitle"]);
+                $("#lblSupplierName").text(row["SupplierName"]);
+                $("#lblFeedbackType").text(row["MaterialQualityTypeName"]);
+                $("#lblFeedbackState").text(row["FeedBackState"]);
+                $("#lblErpOrderNum").text(row["ErpOrderNum"]);
+                $("#lblMaterialNum").text(row["MaterialNum"]);
+                $("#lblDeptName").text(row["DeptName"]);
+
+                $("#lblInputPerson").text(row["InputPersonName"]);
+                $("#lblInputPersonPhone").text(row["InputPersonPhone"] + '/' + row["InputPersonMobile"]);
+                $("#lblInputDate").text(getJsonDateTime(row["InputDateTime"]));
+
+                $("#lblReplyPersonName").text(row["ReplyPersonName"] == null ? "" : row["ReplyPersonName"]);
+                $("#lblReplyDateTime").text(row["ReplyDateTime"] == null ? "" : getJsonDateTime(row["ReplyDateTime"]));
+
+                $("#lblCheckPersonName").text(row["CheckPersonName"] == null ? "" : row["CheckPersonName"]);
+                $("#lblCheckDateTime").text(row["CheckDateTime"] == null ? "" : getJsonDateTime(row["CheckDateTime"]));
+
+                var args = {"id": row["ID"]};
+                $.post("/MaterialQualityFeedback/GetContent", encodeURIComponent(JSON.stringify(args)), function (result) {
+                    $("#lblFeedbackContent").html(result["FeedbackContent"]);
+                    $("#lblReplyContent").html(result["ReplyContent"]);
+                });
+                if (row["FeedBackState"] != "审核通过") {
+                    $("#panelReply").hide();
+                }
+                else {
+                    $("#panelReply").show();
+                }
+
+                $("#InfoID").text(row["ID"]);
+            }
+        };
+        function operateFormatterTitle(value, row, index) {
+            return "<a class='btnInfoShow' href='javascript:void(0)'>" + value + "</a>";
+        }
+
         var columns = [
             {
                 checkbox: true
@@ -217,11 +277,23 @@
             },
             {
                 field: 'FeedbackTitle',
-                title: '反馈单名称'
+                title: '反馈单名称',
+                events: operateEventTitle,
+                formatter: operateFormatterTitle
             },
             {
                 field: 'SupplierName',
                 title: '供应商名称',
+                visible:true
+            },
+            {
+                field: 'MaterialNum',
+                title: 'ERP计划预留号/物资编码',
+                visible:false
+            },
+            {
+                field: 'ErpOrderNum',
+                title: 'ERP订单号',
                 visible:false
             },
             {
@@ -248,12 +320,17 @@
                 }
             },
             {
-                field: 'CheckPersonName',
-                title: '接收人'
+                field: 'AcceptPersonName',
+                title: '接收人',
+                visible:false
             },
             {
-                field: 'CheckDateTime',
-                title: '接收时间'
+                field: 'AcceptDateTime',
+                title: '接收时间',
+                formatter: function (value, row, index) {
+                    return value == null ? "" : getJsonDateTime(value)
+                },
+                visible:false
             },
             {
                 field: 'ReplyPersonName',
@@ -261,7 +338,23 @@
             },
             {
                 field: 'ReplyDateTime',
-                title: '回复时间'
+                title: '回复时间',
+                formatter: function (value, row, index) {
+                    return value == null ? "" : getJsonDateTime(value);
+                }
+            },
+            {
+                field: 'CheckPersonName',
+                title: '审核人',
+                visible:false
+            },
+            {
+                field: 'CheckDateTime',
+                title: '审核时间',
+                formatter: function (value, row, index) {
+                    return value == null ? "" : getJsonDateTime(value);
+                },
+                visible:false
             },
             {
                 field: 'FeedBackState',
@@ -272,6 +365,24 @@
                     }
                     if (row['FeedBackState'] == "待接收") {
                         return '<span class="label label-info">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "接收完成") {
+                        return '<span class="label label-default">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "接收回退") {
+                        return '<span class="label label-danger">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "回复完毕") {
+                        return '<span class="label label-primary">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "回复回退") {
+                        return '<span class="label label-danger">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "审核通过") {
+                        return '<span class="label label-success">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "审核回退") {
+                        return '<span class="label label-danger">' + value + '</span>';
                     }
                     return value;
                 }
