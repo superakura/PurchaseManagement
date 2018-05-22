@@ -43,6 +43,7 @@ namespace PurchaseManagement.Controllers
         }
         #endregion
 
+        #region crud
         //直接提交或第一次保存操作
         [HttpPost]
         [ValidateInput(false)]
@@ -305,12 +306,12 @@ namespace PurchaseManagement.Controllers
                 var info = db.MaterialQualityFeedback.Find(infoID);
                 if (User.IsInRole("物资质量反馈--添加"))
                 {
-                    if (info.FeedBackState!= "审核通过")
+                    if (info.FeedBackState != "审核通过")
                     {
-                        info.ReplyContent ="";
+                        info.ReplyContent = "";
                     }
                 }
-                return Json(new { FeedbackContent=info.FeedbackContent, ReplyContent=info.ReplyContent});
+                return Json(new { FeedbackContent = info.FeedbackContent, ReplyContent = info.ReplyContent });
             }
             catch (Exception ex)
             {
@@ -558,5 +559,25 @@ namespace PurchaseManagement.Controllers
                 return ex.Message;
             }
         }
+
+        //获得审批过程信息
+        [HttpPost]
+        public JsonResult GetLogList()
+        {
+            try
+            {
+                var infoList =
+  JsonConvert.DeserializeObject<Dictionary<String, Object>>(HttpUtility.UrlDecode(Request.Form.ToString()));
+
+                int.TryParse(infoList["feedBackID"].ToString(), out var feedBackID);
+                var list = db.Log.Where(w=>w.LogType== "物资质量反馈" && w.LogDataID==feedBackID).ToList();
+                return Json(list);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        #endregion
     }
 }

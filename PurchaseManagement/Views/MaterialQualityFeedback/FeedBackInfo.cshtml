@@ -29,7 +29,7 @@
         <label>问题类型 | 状态：</label><span id="lblFeedbackType"></span> | <span id="lblFeedbackState"></span>
     </div>
 </div>
-<div class="row">
+<div class="row hidden">
     <div class="col-md-6">
         <label>回复：</label>
         <span id="lblReplyPersonName"></span> |
@@ -43,7 +43,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <label>问题内容</label><a class="pull-right" href="#">查看审批过程</a>
+        <label>问题内容</label><a class="pull-right" id="btnLogInfo" href="#">查看审批过程</a>
         <div class="well well-sm" id="lblFeedbackContent"></div>
     </div>
 </div>
@@ -54,6 +54,38 @@
         <div class="well well-sm" id="lblReplyContent"></div>
     </div>
 </div>
+
+<div class="row" id="logPanel">
+    <div class="col-md-12">
+        <table class="table table-condensed table-hover table-responsive">
+            <thead>
+                <tr class="bg-primary">
+                    <th>操作内容</th>
+                    <th>操作人</th>
+                    <th>操作时间</th>
+                    <th>回退原因</th>
+                </tr>
+            </thead>
+            <tbody id="logTable"></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $("#btnLogInfo").click(function () {
+        $("#logPanel").toggle();
+        var args = {
+            "feedBackID": $("#InfoID").text()
+        };
+        $.post("/MaterialQualityFeedback/GetLogList", encodeURIComponent(JSON.stringify(args)), function (result) {
+            var list = "";
+            $.each(result, function (index, value) {
+                var reason = value["LogReason"] == null ? "" : value["LogReason"];
+                list += "<tr><td>" + value["LogContent"] + "</td><td>" + value["InputPersonName"] + "</td><td>" + getJsonDateTime(value["InputDateTime"]) + "</td><td>" + reason + "</td></tr>";
+            });
+            $("#logTable").empty().append(list);
+        });
+    });
+</script>
 
 
 

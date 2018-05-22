@@ -222,6 +222,7 @@
 
         var operateEventTitle = {
             'click .btnInfoShow': function (e, value, row, index) {
+                $("#logPanel").hide();
                 $('#showModal').modal('show');
                 $("#lblFeedbackTitle").text(row["FeedbackTitle"]);
                 $("#lblSupplierName").text(row["SupplierName"]);

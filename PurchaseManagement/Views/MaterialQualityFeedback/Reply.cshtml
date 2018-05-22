@@ -16,20 +16,22 @@
                 <div class="modal-body">
                     <div class="container-fluid">
                         @Html.Partial("FeedBackInfo")
-                        <div class="row" id="replyContentInput">
-                            <div class="col-md-12">
-                                <div class="form-horizontal">
-                                    <label for="editor">输入回复内容</label>
-                                    <script id="editor" type="text/plain" style="height:100px;">
-                                    </script>
+                        <div id="replyContentInput">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-horizontal">
+                                        <label for="editor">输入回复内容</label>
+                                        <script id="editor" type="text/plain" style="height:100px;">
+                                        </script>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-horizontal">
-                                    <label>回退原因</label>
-                                    <textarea id="tbxBackReason" rows="1" cols="30" class="form-control"></textarea>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-horizontal">
+                                        <label>回退原因</label>
+                                        <textarea id="tbxBackReason" rows="1" cols="30" class="form-control"></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -101,6 +103,7 @@
     var operateEvents = {
         'click .btnInfoShow': function (e, value, row, index) {
             $('#myModal').modal('show');
+            $("#logPanel").hide();
             $("#modalTitle").text("质量反馈信息");
             $("#lblFeedbackTitle").text(row["FeedbackTitle"]);
             $("#lblSupplierName").text(row["SupplierName"]);
@@ -109,26 +112,34 @@
             $("#lblErpOrderNum").text(row["ErpOrderNum"]);
             $("#lblMaterialNum").text(row["MaterialNum"]);
             $("#lblDeptName").text(row["DeptName"]);
+
             $("#lblInputPerson").text(row["InputPersonName"]);
             $("#lblInputPersonPhone").text(row["InputPersonPhone"] + '/' + row["InputPersonMobile"]);
             $("#lblInputDate").text(getJsonDateTime(row["InputDateTime"]));
-            $("#lblReplyPersonName").text(row["ReplyPersonName"] == null ? "" : row["ReplyPersonName"]);
 
-            $("#lblFeedbackContent").html(row["FeedbackContent"]);
-            $("#lblReplyContent").html(row["ReplyContent"]);
-            if (row["ReplyContent"] == null) {
-                $("#panelReply").hide();
-                $("#replyContentInput").show();
+            $("#lblReplyPersonName").text(row["ReplyPersonName"] == null ? "" : row["ReplyPersonName"]);
+            $("#lblReplyDateTime").text(row["ReplyDateTime"] == null ? "" : getJsonDateTime(row["ReplyDateTime"]));
+
+            $("#lblCheckPersonName").text(row["CheckPersonName"] == null ? "" : row["CheckPersonName"]);
+            $("#lblCheckDateTime").text(row["CheckDateTime"] == null ? "" : getJsonDateTime(row["CheckDateTime"]));
+
+            var args = { "id": row["ID"] };
+            $.post("/MaterialQualityFeedback/GetContent", encodeURIComponent(JSON.stringify(args)), function (result) {
+                $("#lblFeedbackContent").html(result["FeedbackContent"]);
+                $("#lblReplyContent").html(result["ReplyContent"]);
+            });
+
+            if (row["FeedBackState"] == "接收完成" || row["FeedBackState"] == "审核回退") {
+                $("#replyContentInput,#btnBack,#btnReply").show();
+            } else
+            {
+                $("#replyContentInput,#btnBack,#btnReply").hide();
             }
-            else {
-                if (row["FeedBackState"] == "审核回退") {
-                    $("#panelReply").show();
-                    $("#replyContentInput").show();
-                }
-                else {
-                    $("#panelReply").show();
-                    $("#replyContentInput").hide();
-                }
+
+            if (row["FeedBackState"] == "审核通过" || row["FeedBackState"] == "审核回退" || row["FeedBackState"] == "回复完毕") {
+                $("#panelReply").show();
+            } else {
+                $("#panelReply").hide();
             }
 
             $("#InfoID").text(row["ID"]);
@@ -166,6 +177,16 @@
                 visible:true
             },
             {
+                field: 'MaterialNum',
+                title: 'ERP计划预留号/物资编码',
+                visible: false
+            },
+            {
+                field: 'ErpOrderNum',
+                title: 'ERP订单号',
+                visible: false
+            },
+            {
                 field: 'MaterialQualityTypeName',
                 title: '质量问题类别'
             },
@@ -189,14 +210,17 @@
                 }
             },
             {
-                field: 'CheckPersonName',
+                field: 'AcceptPersonName',
                 title: '接收人',
-                visible: false,//false表示不显示
+                visible: false
             },
             {
-                field: 'CheckDateTime',
+                field: 'AcceptDateTime',
                 title: '接收时间',
-                visible: false,//false表示不显示
+                formatter: function (value, row, index) {
+                    return value == null ? "" : getJsonDateTime(value)
+                },
+                visible: false
             },
             {
                 field: 'ReplyPersonName',
@@ -210,6 +234,19 @@
                         return getJsonDateTime(value);
                     }
                 }
+            },
+            {
+                field: 'CheckPersonName',
+                title: '审核人',
+                visible: false
+            },
+            {
+                field: 'CheckDateTime',
+                title: '审核时间',
+                formatter: function (value, row, index) {
+                    return value == null ? "" : getJsonDateTime(value);
+                },
+                visible: false
             },
             {
                 field: 'FeedBackState',
@@ -229,6 +266,9 @@
                     }
                     if (row['FeedBackState'] == "回复完毕") {
                         return '<span class="label label-primary">' + value + '</span>';
+                    }
+                    if (row['FeedBackState'] == "回复回退") {
+                        return '<span class="label label-danger">' + value + '</span>';
                     }
                     if (row['FeedBackState'] == "审核通过") {
                         return '<span class="label label-success">' + value + '</span>';
