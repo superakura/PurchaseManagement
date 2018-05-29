@@ -35,10 +35,44 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="panelAppraise" class="form-horizontal hidden">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>考核类型:</label>
+                                    <label><input name="cbxAppraiseType" type="checkbox" value="质量" />质量</label>
+                                    <label><input name="cbxAppraiseType" type="checkbox" value="合同" />合同</label>
+                                    <label><input name="cbxAppraiseType" type="checkbox" value="服务" />服务</label>
+                                    <label><input name="cbxAppraiseType" type="checkbox" value="价格响应" />价格响应</label>
+                                    <label><input name="cbxAppraiseType" type="checkbox" value="诚信" />诚信</label>
+                                    <label><input name="cbxAppraiseType" type="checkbox" value="其他" />其他</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>合同号或报价单或其他</label>
+                                    <input id="tbxAppraiseNum" class="form-control" type="text" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>考核金额</label>
+                                    <input id="tbxAppraiseMoney" class="form-control" type="text" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label>考核分数</label>
+                                    <input id="tbxAppraiseMark" class="form-control" type="text" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>考核标准</label>
+                                    <input id="tbxAppraiseStandard" class="form-control" type="text" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <a href="/MaterialQualityFeedback/GetAppraiseBill?feedBackID=23" id="btnAppraise" class="btn btn-success">生成考核单</a>
                     <button type="button" id="btnBack" class="btn btn-danger">回退</button>
                     <button type="button" id="btnReply" class="btn btn-primary">提交回复</button>
                 </div>
@@ -46,6 +80,7 @@
         </form>
     </div>
 </div>
+
 <div class="box box-danger">
     <div class="box-header">
         <h3 class="box-title">物资质量反馈回复</h3>
@@ -131,15 +166,25 @@
 
             if (row["FeedBackState"] == "接收完成" || row["FeedBackState"] == "审核回退") {
                 $("#replyContentInput,#btnBack,#btnReply").show();
-            } else
-            {
+            }
+            else{
                 $("#replyContentInput,#btnBack,#btnReply").hide();
             }
 
             if (row["FeedBackState"] == "审核通过" || row["FeedBackState"] == "审核回退" || row["FeedBackState"] == "回复完毕") {
                 $("#panelReply").show();
-            } else {
+            }
+            else {
                 $("#panelReply").hide();
+            }
+
+            if (row["FeedBackState"] == "审核通过") {
+                $("#btnAppraise").show().attr("href", "/MaterialQualityFeedback/GetAppraiseBill?feedBackID=" + row["ID"]);
+                //$("#panelAppraise").show();
+            }
+            else {
+                $("#btnAppraise").hide();
+                //$("#panelAppraise").hide();
             }
 
             $("#InfoID").text(row["ID"]);
@@ -247,6 +292,13 @@
                     return value == null ? "" : getJsonDateTime(value);
                 },
                 visible: false
+            },
+            {
+                field: 'AppraiseBillState',
+                title: '考核单状态',
+                formatter: function (value, row, index) {
+                    return value == null ? "" : value;
+                }
             },
             {
                 field: 'FeedBackState',

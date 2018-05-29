@@ -81,8 +81,12 @@ namespace PurchaseManagement.Models
         //待提交、待接收、接收回退、接收完成、回复完毕、回复回退、审核通过、审核回退、考核单已生成
         [StringLength(50)]
         public string FeedBackState { get; set; }
-        
-        //[StringLength(50)]
-        //public string PunishBillState { get; set; }//考核单据状态
+
+        [StringLength(50)]
+        public string AppraiseBillState { get; set; }//考核单据状态，【已生成、待生成】
+
+        public DateTime AppraiseBillInputTime { get; set; }//考核单据生成时间
+
+        public int AppraiseBillNum { get; set; }//考核单据编号
     }
 }

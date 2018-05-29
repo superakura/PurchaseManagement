@@ -31,6 +31,7 @@
         public virtual DbSet<Log> Log { get; set; }//日志信息表
         public virtual DbSet<MaterialQualityFeedback> MaterialQualityFeedback { get; set; }//物质质量反馈表
         public virtual DbSet<MaterialQualityType> MaterialQualityType { get; set; }//物质质量类型表
+        public virtual DbSet<SupplierAppraise> SupplierAppraise { get; set; }//供应商日常考核记录单
         public virtual DbSet<Crud> Crud { get; set; }//Crud测试表
     }
 

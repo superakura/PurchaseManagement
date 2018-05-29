@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Aspose.Words;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -235,6 +236,7 @@ namespace PurchaseManagement.Controllers
                                  f.ReplyPersonID,
                                  f.CheckDateTime,
                                  f.CheckPersonName,
+                                 f.AppraiseBillState,
                                  t.MaterialQualityTypeName,
                                  d.DeptName
                              };
@@ -503,6 +505,7 @@ namespace PurchaseManagement.Controllers
                 info.CheckDateTime = DateTime.Now;
                 info.CheckPersonID = person.UserID;
                 info.CheckPersonName = person.UserName;
+                info.AppraiseBillState = "待生成";
 
                 var log = new Models.Log();
                 log.InputDateTime = DateTime.Now;
@@ -570,13 +573,52 @@ namespace PurchaseManagement.Controllers
   JsonConvert.DeserializeObject<Dictionary<String, Object>>(HttpUtility.UrlDecode(Request.Form.ToString()));
 
                 int.TryParse(infoList["feedBackID"].ToString(), out var feedBackID);
-                var list = db.Log.Where(w=>w.LogType== "物资质量反馈" && w.LogDataID==feedBackID).ToList();
+                var list = db.Log.Where(w => w.LogType == "物资质量反馈" && w.LogDataID == feedBackID).ToList();
                 return Json(list);
             }
             catch (Exception ex)
             {
                 return Json(ex.Message);
             }
+        }
+
+        public FileResult GetAppraiseBill(int feedBackID)
+        {
+            string fileName = Server.MapPath(@"/template/供应商日常考核记录单.doc");
+            Aspose.Words.Document doc = new Aspose.Words.Document(fileName);
+            Aspose.Words.DocumentBuilder builder = new Aspose.Words.DocumentBuilder(doc);
+
+            var info = db.MaterialQualityFeedback.Find(feedBackID);
+            builder.MoveToBookmark("SupplierName");
+            builder.Write(info.SupplierName);
+
+            var lastNum = db.MaterialQualityFeedback.Max(m => m.AppraiseBillNum);
+            lastNum = lastNum == 0 ? 1 : lastNum+1;
+            var appraiseBillNum = "000" + (info.AppraiseBillNum == 0 ? lastNum : info.AppraiseBillNum).ToString();
+            var fileNameWord = "供应商日常考核记录单--" + appraiseBillNum.Substring(appraiseBillNum.Length-4,4);
+            string fileToSave = System.IO.Path.Combine(Server.MapPath("/"), "FileOutput/" + fileNameWord + ".doc");
+            if (System.IO.File.Exists(fileToSave))
+            {
+                System.IO.File.Delete(fileToSave);
+            }
+            doc.Save(fileToSave, SaveFormat.Doc);
+
+            info.AppraiseBillNum = info.AppraiseBillNum ==0?lastNum: info.AppraiseBillNum;
+            info.AppraiseBillInputTime = DateTime.Now;
+            info.AppraiseBillState = "已生成";
+
+            var person = App_Code.Commen.GetUserFromSession();
+            var log = new Models.Log();
+            log.InputDateTime = DateTime.Now;
+            log.InputPersonID = person.UserID;
+            log.InputPersonName = person.UserName;
+            log.LogType = "物资质量反馈";
+            log.LogContent = "生成考核单";
+            log.LogDataID = info.ID;
+            db.Log.Add(log);
+
+            db.SaveChanges();
+            return File(fileToSave, "application/msword", fileNameWord + ".doc");
         }
         #endregion
     }
