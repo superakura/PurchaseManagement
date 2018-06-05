@@ -5,22 +5,20 @@
 }
 <div class="modal fade" id="showModal">
     <div class="modal-dialog modal-lg">
-        <form id="formInfo">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h5 class="modal-title">质量反馈单信息</h5>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        @Html.Partial("FeedBackInfo")
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title">质量反馈单信息</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    @Html.Partial("FeedBackInfo")
                 </div>
             </div>
-        </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
     </div>
 </div>
 <div class="modal fade" id="myModal">
@@ -35,12 +33,18 @@
                     <div class="container-fluid">
                         <div class="form-horizontal">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="tbxTitle">反馈单名称<span class="text-danger">(必填)</span></label>
                                         <input type="text" class="form-control" name="tbxTitle" id="tbxTitle" placeholder="反馈单名称">
                                     </div>
-
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="tbxErpPlanNum">ERP计划预留号<span class="text-danger">(必填)</span></label>
+                                        <input type="text" class="form-control" name="tbxErpPlanNum" id="tbxErpPlanNum" placeholder="ERP计划预留号">
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -53,8 +57,8 @@
                                 <div class="col-md-2"></div>
                                 <div class="col-md-5">
                                     <div class="form-group">
-                                        <label class="text-info" for="tbxMaterialNum">ERP计划预留号/物资编码<span class="text-danger">(选填其中一个)</span></label>
-                                        <input type="text" class="form-control" name="tbxMaterialNum" id="tbxMaterialNum" placeholder="ERP计划预留号/物资编码">
+                                        <label for="tbxMaterialNum">物资编码<span class="text-danger">(必填)</span></label>
+                                        <input type="text" class="form-control" name="tbxMaterialNum" id="tbxMaterialNum" placeholder="物资编码">
                                     </div>
                                 </div>
                             </div>
@@ -68,7 +72,7 @@
                                 <div class="col-md-2"></div>
                                 <div class="col-md-5">
                                     <div class="form-group">
-                                        <label class="text-info" for="tbxErpOrderNum">ERP订单号<span class="text-danger">(选填其中一个)</span></label>
+                                        <label for="tbxErpOrderNum">ERP订单号<span class="text-danger">(选填)</span></label>
                                         <input type="text" class="form-control" name="tbxErpOrderNum" id="tbxErpOrderNum" placeholder="ERP订单号">
                                     </div>
                                 </div>
@@ -77,7 +81,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="editor">问题内容<span class="text-danger">(必填)</span></label>
-                                        <script id="editor" type="text/plain" style="height:300px;">
+                                        <script id="editor" type="text/plain" style="height:200px;">
                                         </script>
                                     </div>
                                     <span class="hidden" id="InfoID"></span>
@@ -115,6 +119,10 @@
                     <div class="form-group">
                         <label for="tbxTitleSearch">反馈单名称：</label>
                         <input type="text" class="form-control" id="tbxTitleSearch" placeholder="反馈单名称">
+                    </div>
+                    <div class="form-group">
+                        <label for="tbxSupplierNameSearch">供应商名称：</label>
+                        <input type="text" class="form-control" id="tbxSupplierNameSearch" placeholder="供应商名称">
                     </div>
                     <div class="form-group">
                         <label for="ddlMaterialQualityTypeSearch">问题类别：</label>
@@ -166,13 +174,17 @@
                     $(".error").removeClass("error");
                     $('#myModal').modal('show');
                     $("#modalTitle").text("编辑信息");
-
                     $("#tbxMaterialNum").val(row.MaterialNum);//物资编码
                     $("#tbxErpOrderNum").val(row.ErpOrderNum);//erp订单号
+                    $("#tbxErpPlanNum").val(row.ErpPlanNum);//ERP计划预留号
                     $("#tbxTitle").val(row.FeedbackTitle);//反馈单标题
                     $("#tbxSupplierName").val(row.SupplierName);//供应商名称
                     $("#InfoID").text(row.ID);//供应商名称
-                    UE.getEditor("editor").setContent(row.FeedbackContent);
+                    var args = { "id": row["ID"] };
+                    $.post("/MaterialQualityFeedback/GetContent", encodeURIComponent(JSON.stringify(args)), function (result) {
+                        UE.getEditor("editor").setContent(result["FeedbackContent"]);
+                    });
+                    
                     $("#ddlMaterialQualityType ").val(row.MaterialQualityTypeID);
                 }
                 else
@@ -229,6 +241,7 @@
                 $("#lblFeedbackType").text(row["MaterialQualityTypeName"]);
                 $("#lblFeedbackState").text(row["FeedBackState"]);
                 $("#lblErpOrderNum").text(row["ErpOrderNum"]);
+                $("#lblErpPlanNum").text(row["ErpPlanNum"]);
                 $("#lblMaterialNum").text(row["MaterialNum"]);
                 $("#lblDeptName").text(row["DeptName"]);
 
@@ -289,7 +302,12 @@
             },
             {
                 field: 'MaterialNum',
-                title: 'ERP计划预留号/物资编码',
+                title: '物资编码',
+                visible:false
+            },
+            {
+                field: 'ErpPlanNum',
+                title: 'ERP计划预留号',
                 visible:false
             },
             {
@@ -358,6 +376,13 @@
                 visible:false
             },
             {
+                field: 'AppraiseBillState',
+                title: '考核单状态',
+                formatter: function (value, row, index) {
+                    return value == null ? "" : value;
+                }
+            },
+            {
                 field: 'FeedBackState',
                 title: '反馈单状态',
                 formatter: function (value, row, index) {
@@ -400,6 +425,7 @@
                 limit: params.limit,   //页面大小
                 offset: params.offset,  //页码
                 feedbackTitle: $("#tbxTitleSearch").val(),
+                supplierName: $("#tbxSupplierNameSearch").val(),
                 materialQualityTypeID: $("#ddlMaterialQualityTypeSearch").val(),
                 materialQualityState: $("#ddlMaterialQualityStateSearch").val()
             };
@@ -480,7 +506,7 @@
 
         //清空myModal表单函数
         function clearInfo() {
-            $("#tbxTitle,#tbxSupplierName,#tbxMaterialNum,#tbxErpOrderNum").val("");
+            $("#tbxTitle,#tbxSupplierName,#tbxMaterialNum,#tbxErpOrderNum,#tbxErpPlanNum").val("");
             UE.getEditor("editor").setContent("");
             $("#InfoID").text("");
             $("label.error").hide();
@@ -491,6 +517,8 @@
         var valid = $("#formInfo").validate({
             rules: {
                 tbxTitle: { required: true, maxlength: 30 },
+                tbxErpPlanNum: { required: true, maxlength: 30 },
+                tbxMaterialNum: { required: true, maxlength: 30 },
                 tbxSupplierName: { required: true, maxlength: 30 }
             }
         });
@@ -501,6 +529,7 @@
                 var contentCount = UE.getEditor("editor").getContentLength(true);//问题描述的内容长度
                 var materialNum = $("#tbxMaterialNum").val();//物资编码
                 var erpOrderNum = $("#tbxErpOrderNum").val();//erp订单号
+                var erpPlanNum = $("#tbxErpPlanNum").val();//ERP计划预留号
                 if (materialNum!=""||erpOrderNum!="") {
                     if (contentCount > 0) {
                         if ($("#InfoID").text() != "") {
@@ -524,6 +553,7 @@
                                         "materialQualityTypeID": materialQualityTypeID,
                                         "materialNum": materialNum,
                                         "erpOrderNum": erpOrderNum,
+                                        "erpPlanNum": erpPlanNum,
                                         "feedbackContent": feedbackContent,
                                         "clickState": clickState
                                     };
@@ -560,6 +590,7 @@
                                         "materialQualityTypeID": materialQualityTypeID,
                                         "materialNum": materialNum,
                                         "erpOrderNum": erpOrderNum,
+                                        "erpPlanNum": erpPlanNum,
                                         "feedbackContent": feedbackContent,
                                         "clickState": clickState
                                     };
@@ -595,6 +626,7 @@
                 var contentCount = UE.getEditor("editor").getContentLength(true);//问题描述的内容长度
                 var materialNum = $("#tbxMaterialNum").val();//物资编码
                 var erpOrderNum = $("#tbxErpOrderNum").val();//erp订单号
+                var erpPlanNum = $("#tbxErpPlanNum").val();//ERP计划预留号
                 if (materialNum != "" || erpOrderNum != "") {
                     if (contentCount > 0) {
                         if ($("#InfoID").text() != "") {
@@ -618,6 +650,7 @@
                                         "materialQualityTypeID": materialQualityTypeID,
                                         "materialNum": materialNum,
                                         "erpOrderNum": erpOrderNum,
+                                        "erpPlanNum": erpPlanNum,
                                         "clickState": clickState,
                                         "feedbackContent": feedbackContent
                                     };
@@ -654,6 +687,7 @@
                                         "materialQualityTypeID": materialQualityTypeID,
                                         "materialNum": materialNum,
                                         "erpOrderNum": erpOrderNum,
+                                        "erpPlanNum": erpPlanNum,
                                         "feedbackContent": feedbackContent,
                                         "clickState": clickState
                                     };
@@ -665,6 +699,7 @@
                                         }
                                         else {
                                             $("#myModal").modal("hide");
+                                            console.log(result);
                                             toastr.error("系统错误，请联系5613877！", "提示");
                                         }
                                     });

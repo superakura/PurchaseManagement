@@ -42,6 +42,12 @@ namespace PurchaseManagement.Controllers
         {
             return View();
         }
+
+        //视图--质量反馈信息公用查询
+        public ViewResult Query()
+        {
+            return View();
+        }
         #endregion
 
         #region crud
@@ -58,6 +64,7 @@ namespace PurchaseManagement.Controllers
                 var feedbackTitle = infoList["feedbackTitle"].ToString();
                 var supplierName = infoList["supplierName"].ToString();
                 var materialNum = infoList["materialNum"].ToString();
+                var erpPlanNum = infoList["erpPlanNum"].ToString();
                 var erpOrderNum = infoList["erpOrderNum"].ToString();
                 var feedbackContent = infoList["feedbackContent"].ToString();
 
@@ -73,6 +80,7 @@ namespace PurchaseManagement.Controllers
                 info.FeedbackTitle = feedbackTitle;
                 info.SupplierName = supplierName;
                 info.MaterialNum = materialNum;
+                info.ErpPlanNum = erpPlanNum;
                 info.ErpOrderNum = erpOrderNum;
                 info.MaterialQualityTypeID = materialQualityTypeID;
                 info.FeedbackContent = feedbackContent;
@@ -118,6 +126,7 @@ namespace PurchaseManagement.Controllers
                 var feedbackTitle = infoList["feedbackTitle"].ToString();
                 var supplierName = infoList["supplierName"].ToString();
                 var materialNum = infoList["materialNum"].ToString();
+                var erpPlanNum = infoList["erpPlanNum"].ToString();
                 var erpOrderNum = infoList["erpOrderNum"].ToString();
                 var feedbackContent = infoList["feedbackContent"].ToString();
                 var materialQualityTypeID = 0;
@@ -131,6 +140,7 @@ namespace PurchaseManagement.Controllers
                 info.FeedbackTitle = feedbackTitle;
                 info.SupplierName = supplierName;
                 info.MaterialNum = materialNum;
+                info.ErpPlanNum = erpPlanNum;
                 info.ErpOrderNum = erpOrderNum;
                 info.FeedbackContent = feedbackContent;
                 info.MaterialQualityTypeID = materialQualityTypeID;
@@ -200,6 +210,7 @@ namespace PurchaseManagement.Controllers
                 int.TryParse(Request.Form["limit"], out var limit);
                 int.TryParse(Request.Form["offset"], out var offset);
                 var feedbackTitle = Request.Form["feedbackTitle"];//反馈单名称
+                var supplierName = Request.Form["supplierName"];//供应商名称
                 var materialQualityState = Request.Form["materialQualityState"];//反馈单状态
                 int.TryParse(Request.Form["materialQualityTypeID"], out var materialQualityTypeID);//物资质量问题类型ID
 
@@ -222,6 +233,7 @@ namespace PurchaseManagement.Controllers
                                  f.SupplierName,
                                  f.ErpOrderNum,
                                  f.MaterialNum,
+                                 f.ErpPlanNum,
                                  f.FeedBackState,
                                  f.InputDeptID,
                                  f.InputDateTime,
@@ -278,6 +290,10 @@ namespace PurchaseManagement.Controllers
                 {
                     result = result.Where(w => w.FeedbackTitle.Contains(feedbackTitle));
                 }
+                if (!string.IsNullOrEmpty(supplierName))
+                {
+                    result = result.Where(w => w.SupplierName.Contains(supplierName));
+                }
                 if (!string.IsNullOrEmpty(materialQualityState))
                 {
                     result = result.Where(w => w.FeedBackState == materialQualityState);
@@ -294,6 +310,7 @@ namespace PurchaseManagement.Controllers
             }
         }
 
+        //获得问题内容和反馈内容
         [HttpPost]
         public JsonResult GetContent()
         {
@@ -582,6 +599,7 @@ namespace PurchaseManagement.Controllers
             }
         }
 
+        //生成考核单word
         public FileResult GetAppraiseBill(int feedBackID)
         {
             string fileName = Server.MapPath(@"/template/供应商日常考核记录单.doc");

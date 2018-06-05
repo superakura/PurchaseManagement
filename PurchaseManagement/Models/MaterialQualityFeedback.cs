@@ -25,10 +25,13 @@ namespace PurchaseManagement.Models
         public string SupplierName { get; set; }//供应商名称
 
         [StringLength(200)]
-        public string MaterialNum { get; set; }//ERP计划预留号/物资编码
+        public string ErpPlanNum { get; set; }//ERP计划预留号，【必填】
 
         [StringLength(200)]
-        public string ErpOrderNum { get; set; }//ERP订单号
+        public string MaterialNum { get; set; }//物资编码，【必填】
+
+        [StringLength(200)]
+        public string ErpOrderNum { get; set; }//ERP订单号，【可选】
 
         [Required]
         [StringLength(1000)]
@@ -83,9 +86,9 @@ namespace PurchaseManagement.Models
         public string FeedBackState { get; set; }
 
         [StringLength(50)]
-        public string AppraiseBillState { get; set; }//考核单据状态，【已生成、待生成】
+        public string AppraiseBillState { get; set; }//考核单据状态，【已生成、未生成】
 
-        public DateTime AppraiseBillInputTime { get; set; }//考核单据生成时间
+        public DateTime? AppraiseBillInputTime { get; set; }//考核单据生成时间
 
         public int AppraiseBillNum { get; set; }//考核单据编号
     }

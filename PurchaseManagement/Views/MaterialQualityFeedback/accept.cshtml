@@ -61,6 +61,10 @@
                         <input type="text" class="form-control" placeholder="反馈单名称">
                     </div>
                     <div class="form-group">
+                        <label for="tbxSupplierNameSearch">供应商名称：</label>
+                        <input type="text" class="form-control" id="tbxSupplierNameSearch" placeholder="供应商名称">
+                    </div>
+                    <div class="form-group">
                         <label for="ddlMaterialQualityTypeSearch">问题类别：</label>
                         <select id="ddlMaterialQualityTypeSearch" class="form-control"></select>
                     </div>
@@ -244,6 +248,13 @@
                 visible: false
             },
             {
+                field: 'AppraiseBillState',
+                title: '考核单状态',
+                formatter: function (value, row, index) {
+                    return value == null ? "" : value;
+                }
+            },
+            {
                 field: 'FeedBackState',
                 title: '反馈单状态',
                 formatter: function (value, row, index) {
@@ -280,6 +291,7 @@
                 limit: params.limit,   //页面大小
                 offset: params.offset,  //页码
                 feedbackTitle: $("#tbxTitleSearch").val(),
+                supplierName: $("#tbxSupplierNameSearch").val(),
                 materialQualityTypeID: $("#ddlMaterialQualityTypeSearch").val(),
                 materialQualityState: $("#ddlMaterialQualityStateSearch").val()
             };
@@ -395,7 +407,7 @@
                         return;
                     }
                     else {
-                        var backReason = $("#tbxFeedBackReason").val();
+                        var backReason = $("#tbxBackReason").val();
                         var feedBackID = $("#InfoID").text();
 
                         var args = {
@@ -410,7 +422,7 @@
                             }
                             else {
                                 $("#myModal").modal("hide");
-                                toastr.error("系统错误，请联系5613877！", "提示");
+                                toastr.error(result, "提示");
                             }
                         });
                     }
