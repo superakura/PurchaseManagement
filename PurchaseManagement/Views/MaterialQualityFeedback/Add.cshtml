@@ -113,41 +113,8 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="row">
-            <div class="col-md-12">
-                <form class="form-inline" role="form">
-                    <div class="form-group">
-                        <label for="tbxTitleSearch">反馈单名称：</label>
-                        <input type="text" class="form-control" id="tbxTitleSearch" placeholder="反馈单名称">
-                    </div>
-                    <div class="form-group">
-                        <label for="tbxSupplierNameSearch">供应商名称：</label>
-                        <input type="text" class="form-control" id="tbxSupplierNameSearch" placeholder="供应商名称">
-                    </div>
-                    <div class="form-group">
-                        <label for="ddlMaterialQualityTypeSearch">问题类别：</label>
-                        <select id="ddlMaterialQualityTypeSearch" class="form-control"></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="ddlMaterialQualityStateSearch">反馈单状态：</label>
-                        <select id="ddlMaterialQualityStateSearch" class="form-control">
-                            <option value="">全部</option>
-                            <option value="待提交">待提交</option>
-                            <option value="待接收">待接收</option>
-                            <option value="接收完成">接收完成</option>
-                            <option value="接收回退">接收回退</option>
-                            <option value="回复完毕">回复完毕</option>
-                            <option value="回复回退">回复回退</option>
-                            <option value="审核通过">审核通过</option>
-                            <option value="审核回退">审核回退</option>
-                        </select>
-                    </div>
-                    <button type="button" id="btnSearch" class="btn btn-primary">
-                        <span class="glyphicon glyphicon-search"></span> 查询
-                    </button>
-                </form>
-            </div>
-        </div>
+        @*搜索区域*@
+        @Html.Partial("SearchInfo")
         <hr />
         <div class="row">
             <div class="col-md-12">
@@ -420,18 +387,7 @@
                 events: operateEvents,
                 formatter: operateFormatter
             }];
-        var queryParams = function (params) {
-            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
-                limit: params.limit,   //页面大小
-                offset: params.offset,  //页码
-                feedbackTitle: $("#tbxTitleSearch").val(),
-                supplierName: $("#tbxSupplierNameSearch").val(),
-                materialQualityTypeID: $("#ddlMaterialQualityTypeSearch").val(),
-                materialQualityState: $("#ddlMaterialQualityStateSearch").val()
-            };
-            return temp;
-        };
-
+        
         //初始化BS-Table
         $('#bsTable').bootstrapTable({
             url: '/MaterialQualityFeedback/GetList',         //请求后台的URL（*）
@@ -467,23 +423,6 @@
         .on('all.bs.table', function (e, name, args) {
             $('[data-toggle="tooltip"]').tooltip();
         });
-
-        //搜索按钮
-        $("#btnSearch").click(function () {
-            $("#bsTable").bootstrapTable('refresh');
-        });
-
-        //搜索加载质量问题类型函数
-        LoadProblemTypeSearch();
-        function LoadProblemTypeSearch() {
-            $.post("/MaterialQualityType/GetListAll", "", function (result) {
-                var list = "";
-                $.each(result, function (indexInArray, valueOfElement) {
-                    list += "<option value='" + valueOfElement["MaterialQualityTypeID"] + "'>" + valueOfElement["MaterialQualityTypeName"] + "</option>";
-                });
-                $("#ddlMaterialQualityTypeSearch").empty().append(list).prepend("<option value=''>全部</option>").val(0);
-            });
-        };
 
         //表单加载质量问题类型函数
         LoadProblemType();

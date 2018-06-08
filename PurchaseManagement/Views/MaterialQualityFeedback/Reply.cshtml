@@ -72,7 +72,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <a href="/MaterialQualityFeedback/GetAppraiseBill?feedBackID=23" id="btnAppraise" class="btn btn-success">生成考核单</a>
+                    <a href="#" id="btnAppraiseLink" class="hidden">生成考核单链接</a>
+                    <button type="button" id="btnAppraise" class="btn btn-success">生成考核单</button>
                     <button type="button" id="btnBack" class="btn btn-danger">回退</button>
                     <button type="button" id="btnReply" class="btn btn-primary">提交回复</button>
                 </div>
@@ -91,41 +92,7 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="row">
-            <div class="col-md-12">
-                <form class="form-inline" role="form">
-                    <div class="form-group">
-                        <label for="tbxTitleSearch">反馈单名称：</label>
-                        <input type="text" class="form-control" placeholder="反馈单名称">
-                    </div>
-                    <div class="form-group">
-                        <label for="tbxSupplierNameSearch">供应商名称：</label>
-                        <input type="text" class="form-control" id="tbxSupplierNameSearch" placeholder="供应商名称">
-                    </div>
-                    <div class="form-group">
-                        <label for="ddlMaterialQualityTypeSearch">问题类别：</label>
-                        <select id="ddlMaterialQualityTypeSearch" class="form-control"></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="ddlMaterialQualityStateSearch">反馈单状态：</label>
-                        <select id="ddlMaterialQualityStateSearch" class="form-control">
-                            <option value="">全部</option>
-                            <option value="待提交">待提交</option>
-                            <option value="待接收">待接收</option>
-                            <option value="接收完成">接收完成</option>
-                            <option value="接收回退">接收回退</option>
-                            <option value="回复完毕">回复完毕</option>
-                            <option value="回复回退">回复回退</option>
-                            <option value="审核通过">审核通过</option>
-                            <option value="审核回退">审核回退</option>
-                        </select>
-                    </div>
-                    <button type="button" id="btnSearch" class="btn btn-primary">
-                        <span class="glyphicon glyphicon-search"></span> 查询
-                    </button>
-                </form>
-            </div>
-        </div>
+        @Html.Partial("SearchInfo")
         <hr />
         <div class="row">
             <div class="col-md-12">
@@ -149,6 +116,7 @@
             $("#lblFeedbackType").text(row["MaterialQualityTypeName"]);
             $("#lblFeedbackState").text(row["FeedBackState"]);
             $("#lblErpOrderNum").text(row["ErpOrderNum"]);
+            $("#lblErpPlanNum").text(row["ErpPlanNum"]);
             $("#lblMaterialNum").text(row["MaterialNum"]);
             $("#lblDeptName").text(row["DeptName"]);
 
@@ -171,7 +139,7 @@
             if (row["FeedBackState"] == "接收完成" || row["FeedBackState"] == "审核回退") {
                 $("#replyContentInput,#btnBack,#btnReply").show();
             }
-            else{
+            else {
                 $("#replyContentInput,#btnBack,#btnReply").hide();
             }
 
@@ -183,12 +151,12 @@
             }
 
             if (row["FeedBackState"] == "审核通过") {
-                $("#btnAppraise").show().attr("href", "/MaterialQualityFeedback/GetAppraiseBill?feedBackID=" + row["ID"]);
-                //$("#panelAppraise").show();
+                $("#btnAppraiseLink").attr("href", "/MaterialQualityFeedback/GetAppraiseBill?feedBackID=" + row["ID"]);
+                $("#btnAppraise").show();
             }
             else {
+                $("#btnAppraiseLink").attr("href", "#");
                 $("#btnAppraise").hide();
-                //$("#panelAppraise").hide();
             }
 
             $("#InfoID").text(row["ID"]);
@@ -196,157 +164,150 @@
     };
 
     function operateFormatter(value, row, index) {
-        return "<a class='btnInfoShow' href='javascript:void(0)'>"+value+"</a>";
+        return "<a class='btnInfoShow' href='javascript:void(0)'>" + value + "</a>";
     }
 
     var columns = [
-            {
-                checkbox: true
+        {
+            checkbox: true
+        },
+        {
+            title: '序号',
+            formatter: function (value, row, index) {
+                return index + 1;
+            }
+        },
+        {
+            field: 'ID',
+            title: '数据ID',
+            visible: false,//false表示不显示
+        },
+        {
+            field: 'FeedbackTitle',
+            title: '反馈单名称',
+            events: operateEvents,
+            formatter: operateFormatter
+        },
+        {
+            field: 'SupplierName',
+            title: '供应商名称',
+            visible: true
+        },
+        {
+            field: 'MaterialNum',
+            title: '物资编码',
+            visible: false
+        },
+        {
+            field: 'ErpPlanNum',
+            title: 'ERP计划预留号',
+            visible: false
+        },
+        {
+            field: 'ErpOrderNum',
+            title: 'ERP订单号',
+            visible: false
+        },
+        {
+            field: 'MaterialQualityTypeName',
+            title: '质量问题类别'
+        },
+        {
+            field: 'DeptName',
+            title: '提报部门'
+        },
+        {
+            field: 'InputPersonName',
+            title: '提报人',
+            formatter: function (value, row, index) {
+                var person = "<a href='#' data-toggle='tooltip' data-placement='top' title='联系方式：" + row["InputPersonPhone"] + '/' + row["InputPersonMobile"] + "'>" + value + "</a>";
+                return person;
+            }
+        },
+        {
+            field: 'InputDateTime',
+            title: '提报时间',
+            formatter: function (value, row, index) {
+                return getJsonDateTime(value)
+            }
+        },
+        {
+            field: 'AcceptPersonName',
+            title: '接收人',
+            visible: false
+        },
+        {
+            field: 'AcceptDateTime',
+            title: '接收时间',
+            formatter: function (value, row, index) {
+                return value == null ? "" : getJsonDateTime(value)
             },
-            {
-                title: '序号',
-                formatter: function (value, row, index) {
-                    return index + 1;
+            visible: false
+        },
+        {
+            field: 'ReplyPersonName',
+            title: '回复人'
+        },
+        {
+            field: 'ReplyDateTime',
+            title: '回复时间',
+            formatter: function (value, row, index) {
+                if (value != null) {
+                    return getJsonDateTime(value);
                 }
+            }
+        },
+        {
+            field: 'CheckPersonName',
+            title: '审核人',
+            visible: false
+        },
+        {
+            field: 'CheckDateTime',
+            title: '审核时间',
+            formatter: function (value, row, index) {
+                return value == null ? "" : getJsonDateTime(value);
             },
-            {
-                field: 'ID',
-                title: '数据ID',
-                visible: false,//false表示不显示
-            },
-            {
-                field: 'FeedbackTitle',
-                title: '反馈单名称',
-                events: operateEvents,
-                formatter: operateFormatter
-            },
-            {
-                field: 'SupplierName',
-                title: '供应商名称',
-                visible:true
-            },
-            {
-                field: 'MaterialNum',
-                title: 'ERP计划预留号/物资编码',
-                visible: false
-            },
-            {
-                field: 'ErpOrderNum',
-                title: 'ERP订单号',
-                visible: false
-            },
-            {
-                field: 'MaterialQualityTypeName',
-                title: '质量问题类别'
-            },
-            {
-                field: 'DeptName',
-                title: '提报部门'
-            },
-            {
-                field: 'InputPersonName',
-                title: '提报人',
-                formatter: function (value, row, index) {
-                    var person = "<a href='#' data-toggle='tooltip' data-placement='top' title='联系方式：" + row["InputPersonPhone"] + '/' + row["InputPersonMobile"] + "'>" + value + "</a>";
-                    return person;
+            visible: false
+        },
+        {
+            field: 'AppraiseBillState',
+            title: '考核单状态',
+            formatter: function (value, row, index) {
+                return value == null ? "" : value;
+            }
+        },
+        {
+            field: 'FeedBackState',
+            title: '反馈单状态',
+            formatter: function (value, row, index) {
+                if (row['FeedBackState'] == "待提交") {
+                    return '<span class="label label-warning">' + value + '</span>';
                 }
-            },
-            {
-                field: 'InputDateTime',
-                title: '提报时间',
-                formatter: function (value, row, index) {
-                    return getJsonDateTime(value)
+                if (row['FeedBackState'] == "待接收") {
+                    return '<span class="label label-info">' + value + '</span>';
                 }
-            },
-            {
-                field: 'AcceptPersonName',
-                title: '接收人',
-                visible: false
-            },
-            {
-                field: 'AcceptDateTime',
-                title: '接收时间',
-                formatter: function (value, row, index) {
-                    return value == null ? "" : getJsonDateTime(value)
-                },
-                visible: false
-            },
-            {
-                field: 'ReplyPersonName',
-                title: '回复人'
-            },
-            {
-                field: 'ReplyDateTime',
-                title: '回复时间',
-                formatter: function (value, row, index) {
-                    if (value != null) {
-                        return getJsonDateTime(value);
-                    }
+                if (row['FeedBackState'] == "接收完成") {
+                    return '<span class="label label-default">' + value + '</span>';
                 }
-            },
-            {
-                field: 'CheckPersonName',
-                title: '审核人',
-                visible: false
-            },
-            {
-                field: 'CheckDateTime',
-                title: '审核时间',
-                formatter: function (value, row, index) {
-                    return value == null ? "" : getJsonDateTime(value);
-                },
-                visible: false
-            },
-            {
-                field: 'AppraiseBillState',
-                title: '考核单状态',
-                formatter: function (value, row, index) {
-                    return value == null ? "" : value;
+                if (row['FeedBackState'] == "接收回退") {
+                    return '<span class="label label-danger">' + value + '</span>';
                 }
-            },
-            {
-                field: 'FeedBackState',
-                title: '反馈单状态',
-                formatter: function (value, row, index) {
-                    if (row['FeedBackState'] == "待提交") {
-                        return '<span class="label label-warning">' + value + '</span>';
-                    }
-                    if (row['FeedBackState'] == "待接收") {
-                        return '<span class="label label-info">' + value + '</span>';
-                    }
-                    if (row['FeedBackState'] == "接收完成") {
-                        return '<span class="label label-default">' + value + '</span>';
-                    }
-                    if (row['FeedBackState'] == "接收回退") {
-                        return '<span class="label label-danger">' + value + '</span>';
-                    }
-                    if (row['FeedBackState'] == "回复完毕") {
-                        return '<span class="label label-primary">' + value + '</span>';
-                    }
-                    if (row['FeedBackState'] == "回复回退") {
-                        return '<span class="label label-danger">' + value + '</span>';
-                    }
-                    if (row['FeedBackState'] == "审核通过") {
-                        return '<span class="label label-success">' + value + '</span>';
-                    }
-                    if (row['FeedBackState'] == "审核回退") {
-                        return '<span class="label label-danger">' + value + '</span>';
-                    }
-                    return value;
+                if (row['FeedBackState'] == "回复完毕") {
+                    return '<span class="label label-primary">' + value + '</span>';
                 }
-            }];
-
-    var queryParams = function (params) {
-            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
-                limit: params.limit,   //页面大小
-                offset: params.offset,  //页码
-                feedbackTitle: $("#tbxTitleSearch").val(),
-                supplierName: $("#tbxSupplierNameSearch").val(),
-                materialQualityTypeID: $("#ddlMaterialQualityTypeSearch").val(),
-                materialQualityState: $("#ddlMaterialQualityStateSearch").val()
-            };
-            return temp;
-    };
+                if (row['FeedBackState'] == "回复回退") {
+                    return '<span class="label label-danger">' + value + '</span>';
+                }
+                if (row['FeedBackState'] == "审核通过") {
+                    return '<span class="label label-success">' + value + '</span>';
+                }
+                if (row['FeedBackState'] == "审核回退") {
+                    return '<span class="label label-danger">' + value + '</span>';
+                }
+                return value;
+            }
+        }];
 
     //初始化BS-Table
     $('#bsTable').bootstrapTable({
@@ -380,26 +341,9 @@
         showExport: false,                     //是否显示导出
         columns: columns
     })
-    .on('all.bs.table', function (e, name, args) {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-
-    //搜索按钮
-    $("#btnSearch").click(function () {
-        $("#bsTable").bootstrapTable('refresh');
-    });
-
-    //搜索加载质量问题类型函数
-    LoadProblemTypeSearch();
-    function LoadProblemTypeSearch() {
-            $.post("/MaterialQualityType/GetListAll", "", function (result) {
-                var list = "";
-                $.each(result, function (indexInArray, valueOfElement) {
-                    list += "<option value='" + valueOfElement["MaterialQualityTypeID"] + "'>" + valueOfElement["MaterialQualityTypeName"] + "</option>";
-                });
-                $("#ddlMaterialQualityTypeSearch").empty().append(list).prepend("<option value=''>全部</option>").val(0);
-            });
-    };
+        .on('all.bs.table', function (e, name, args) {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
 
     $("#btnReply").click(function () {
         var state = $("#lblFeedbackState").text();
@@ -439,14 +383,14 @@
         else {
             toastr.warning("只有【接收完成】或【审核回退】状态的反馈单可执行接收操作！", "提示");
         }
-        
+
     });
 
     $("#btnBack").click(function () {
         var state = $("#lblFeedbackState").text();
         if (state == "接收完成" || state == "审核回退") {
             var backReason = $("#tbxBackReason").val();
-            if (backReason!="") {
+            if (backReason != "") {
                 Ewin.confirm({ message: "确定要回退质量反馈单吗？" }).on(function (e) {
                     if (!e) {
                         return;
@@ -476,8 +420,19 @@
                 toastr.error("回退原因必须填写！", "提示");
             }
         }
-        else{
+        else {
             toastr.warning("只有【待接收】或【回复回退】状态的反馈单可执行回退操作！", "提示");
         }
+    });
+
+    $("#btnAppraise").click(function () {
+        Ewin.confirm({ message: "确定要生成考核单吗？" }).on(function (e) {
+            if (!e) {
+                return;
+            }
+            else {
+                document.getElementById("btnAppraiseLink").click();
+            }
+        });
     });
 </script>

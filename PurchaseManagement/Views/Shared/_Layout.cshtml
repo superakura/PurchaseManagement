@@ -7,6 +7,7 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>@ViewBag.Title</title>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/bootstrap-table-dist/bootstrap-table.css" rel="stylesheet" />
     <link href="~/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="~/bower_components/Ionicons/css/ionicons.min.css" rel="stylesheet" />
@@ -25,9 +26,10 @@
             margin-top: -25px;
             margin-left: -150px;
         }
-        hr{
-            margin-top:5px;
-            margin-bottom:5px;
+
+        hr {
+            margin-top: 5px;
+            margin-bottom: 5px;
         }
 
         label.error {
@@ -51,6 +53,8 @@
     <script src="~/bootstrap-table-dist/bootstrap-table.min.js"></script>
     <script src="~/bootstrap-table-dist/locale/bootstrap-table-zh-CN.min.js"></script>
     <script src="~/Scripts/bootstrap-paginator.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.zh-CN.js"></script>
     <script src="~/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
     <script src="~/bower_components/fastclick/lib/fastclick.js"></script>
     <script src="~/dist/js/adminlte.min.js"></script>
@@ -285,15 +289,15 @@
 
         <script>
             var ngConfig = {
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    transformRequest: function (obj) {
-                        var str = [];
-                        for (var p in obj) {
-                            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                        }
-                        return str.join("&");
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                transformRequest: function (obj) {
+                    var str = [];
+                    for (var p in obj) {
+                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
                     }
-                };
+                    return str.join("&");
+                }
+            };
 
             //设置全局Ajax超时转跳
             $.ajaxSetup({

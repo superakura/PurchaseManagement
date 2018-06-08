@@ -36,6 +36,7 @@ namespace PurchaseManagement.Controllers
 
             var result = (from u in db.UserInfo
                           join d in db.DeptInfo on u.UserDeptID equals d.DeptID
+                          join f in db.DeptInfo on d.DeptFatherID equals f.DeptID
                           where u.UserState == 0
                           //where userDept.Contains(d.DeptID) & u.UserState == 0
                           orderby u.UserNum
@@ -48,6 +49,7 @@ namespace PurchaseManagement.Controllers
                               u.UserPhone,
                               u.UserEmail,
                               d.DeptName,
+                              fatherDeptName=f.DeptName,
                               u.UserDeptID,
                               u.UserMobile,
                               u.UserRemark

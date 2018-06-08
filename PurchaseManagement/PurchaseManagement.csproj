@@ -290,6 +290,7 @@
     <Content Include="bootstrap-table-dist\locale\bootstrap-table-zh-CN.min.js" />
     <Content Include="bootstrap-table-dist\locale\bootstrap-table-zh-TW.js" />
     <Content Include="bootstrap-table-dist\locale\bootstrap-table-zh-TW.min.js" />
+    <Content Include="Content\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -429,6 +430,8 @@
     <Content Include="net\Bin\Newtonsoft.Json.xml" />
     <Content Include="net\net.sln" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.zh-CN.js" />
     <Content Include="Scripts\bootstrap-paginator.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -698,6 +701,7 @@
     <Content Include="Views\MaterialQualityFeedback\FeedBackInfo.cshtml" />
     <Content Include="Views\Test\NgBsTable.cshtml" />
     <Content Include="Views\Test\NgBsTableDB.cshtml" />
+    <Content Include="Views\MaterialQualityFeedback\SearchInfo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,0 +1,123 @@
+﻿
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-inline">
+            <div class="form-group">
+                <label for="tbxTitleSearch">反馈单名称：</label>
+                <input type="text" class="form-control" placeholder="反馈单名称">
+            </div>
+            <div class="form-group">
+                <label for="tbxSupplierNameSearch">供应商：</label>
+                <input type="text" class="form-control" id="tbxSupplierNameSearch" placeholder="供应商">
+            </div>
+            <div class="form-group">
+                <label for="ddlMaterialQualityTypeSearch">问题类别：</label>
+                <select id="ddlMaterialQualityTypeSearch" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label for="ddlMaterialQualityStateSearch">反馈单状态：</label>
+                <select id="ddlMaterialQualityStateSearch" class="form-control">
+                    <option value="" selected>全部</option>
+                    <option value="待提交">待提交</option>
+                    <option value="待接收">待接收</option>
+                    <option value="接收完成">接收完成</option>
+                    <option value="接收回退">接收回退</option>
+                    <option value="回复完毕">回复完毕</option>
+                    <option value="回复回退">回复回退</option>
+                    <option value="审核通过">审核通过</option>
+                    <option value="审核回退">审核回退</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ddlAppraiseBillStateSearch">考核单状态：</label>
+                <select id="ddlAppraiseBillStateSearch" name="ddlAppraiseBillStateSearch" class="form-control">
+                    <option value="">全部</option>
+                    <option value="已生成">已生成</option>
+                    <option value="未生成">未生成</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tbxSupplierNameSearch">提报时间：</label>
+                <input type="text" class="form-control" id="tbxInputTimeStartSearch">--
+                <input type="text" class="form-control" id="tbxInputTimeEndSearch">
+            </div>
+            <button type="button" id="btnSearch" class="btn btn-primary">
+                <span class="glyphicon glyphicon-search"></span> 查询
+            </button>
+            <button type="button" id="btnReset" class="btn bg-navy">
+                <span class="glyphicon glyphicon-repeat"></span> 重置
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    $("#tbxInputTimeStartSearch,#tbxInputTimeEndSearch").datetimepicker({
+        language: 'zh-CN',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0,
+        format: 'yyyy-mm-dd'
+    });
+
+    var queryParams = function (params) {
+        var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+            limit: params.limit,   //页面大小
+            offset: params.offset,  //页码
+            feedbackTitle: $("#tbxTitleSearch").val(),
+            supplierName: $("#tbxSupplierNameSearch").val(),
+            inputTimeStart: $("#tbxInputTimeStartSearch").val(),
+            inputTimeEnd: $("#tbxInputTimeEndSearch").val(),
+            materialQualityTypeID: $("#ddlMaterialQualityTypeSearch").val(),
+            appraiseBillState: $("#ddlAppraiseBillStateSearch").val(),
+            materialQualityState: $("#ddlMaterialQualityStateSearch").val()
+        };
+        return temp;
+    };
+
+    $(document).ready(function () {
+        //日期比较，返回true、false
+        function CompareDate(d1, d2) {
+            return ((new Date(d1.replace(/-/g, "\/"))) <= (new Date(d2.replace(/-/g, "\/"))));
+        }
+
+        //搜索加载质量问题类型函数
+        LoadProblemTypeSearch();
+        function LoadProblemTypeSearch() {
+            $.post("/MaterialQualityType/GetListAll", "", function (result) {
+                var list = "";
+                $.each(result, function (indexInArray, valueOfElement) {
+                    list += "<option value='" + valueOfElement["MaterialQualityTypeID"] + "'>" + valueOfElement["MaterialQualityTypeName"] + "</option>";
+                });
+                $("#ddlMaterialQualityTypeSearch").empty().append(list).prepend("<option value=''>全部</option>").val(0);
+            });
+        };
+
+        //搜索按钮
+        $("#btnSearch").click(function () {
+            var inputTimeStart = $("#tbxInputTimeStartSearch").val();
+            var inputTimeEnd = $("#tbxInputTimeEndSearch").val();
+            if (inputTimeStart != "" || inputTimeEnd != "") {
+                if (CompareDate(inputTimeStart, inputTimeEnd)) {
+                    $("#bsTable").bootstrapTable('refresh');
+                }
+                else {
+                    toastr.error("日期范围必须填写完整，结束日期必须大于开始日期！", "提示");
+                }
+            }
+            else {
+                $("#bsTable").bootstrapTable('refresh');
+            }
+        });
+
+        //重置按钮
+        $("#btnReset").click(function () {
+            $("#tbxInputTimeStartSearch,#tbxInputTimeEndSearch,#tbxTitleSearch,#tbxSupplierNameSearch").val("");
+            $("#ddlMaterialQualityStateSearch,#ddlMaterialQualityTypeSearch,#ddlAppraiseBillStateSearch").val("");
+            $("#bsTable").bootstrapTable('refresh');
+        });
+    });
+</script>

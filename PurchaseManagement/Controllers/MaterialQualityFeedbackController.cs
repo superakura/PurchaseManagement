@@ -212,6 +212,9 @@ namespace PurchaseManagement.Controllers
                 var feedbackTitle = Request.Form["feedbackTitle"];//反馈单名称
                 var supplierName = Request.Form["supplierName"];//供应商名称
                 var materialQualityState = Request.Form["materialQualityState"];//反馈单状态
+                var appraiseBillState = Request.Form["appraiseBillState"];//考核单状态
+                var inputTimeStart = Request.Form["inputTimeStart"];//反馈单提交时间开始
+                var inputTimeEnd = Request.Form["inputTimeEnd"];//反馈单提交时间结束
                 int.TryParse(Request.Form["materialQualityTypeID"], out var materialQualityTypeID);//物资质量问题类型ID
 
                 var userInfo = App_Code.Commen.GetUserFromSession();
@@ -297,6 +300,16 @@ namespace PurchaseManagement.Controllers
                 if (!string.IsNullOrEmpty(materialQualityState))
                 {
                     result = result.Where(w => w.FeedBackState == materialQualityState);
+                }
+                if (!string.IsNullOrEmpty(appraiseBillState))
+                {
+                    result = result.Where(w => w.AppraiseBillState == appraiseBillState);
+                }
+                if (!string.IsNullOrEmpty(inputTimeStart) & !string.IsNullOrEmpty(inputTimeEnd))
+                {
+                    var dateStart = Convert.ToDateTime(inputTimeStart);
+                    var dateEnd = Convert.ToDateTime(inputTimeEnd);
+                    result = result.Where(w => System.Data.Entity.DbFunctions.DiffDays(w.InputDateTime, dateStart) <= 0 && System.Data.Entity.DbFunctions.DiffDays(w.InputDateTime, dateEnd) >= 0);
                 }
                 if (materialQualityTypeID != 0)
                 {

@@ -112,7 +112,7 @@
                 </div>
             </div>
             <div class="box-body">
-                <iframe style="width:100%;border:none;" src="/Dept/iFrameDeptTree" id="iFrameLeftDept" name="LeftDept"></iframe>
+                <iframe style="width:100%;border:none;height:600px;" src="/Dept/iFrameDeptTree" id="iFrameLeftDept" name="LeftDept"></iframe>
             </div>
         </div>
     </div>
@@ -307,7 +307,6 @@
                             "roleList": roleList,
                             "deptList": deptList
                         };
-                        console.log(args);
                         $.post("/UserInfo/Insert", encodeURIComponent(JSON.stringify(args)), function (result) {
                             if (result == "ok") {
                                 $("#myModal").modal("hide");
@@ -342,7 +341,12 @@
             {
                 field: 'UserName',
                 title: '用户姓名'
-            }, {
+            },
+            {
+                field: 'fatherDeptName',
+                title: '二级单位'
+            },
+            {
                 field: 'DeptName',
                 title: '部门名称'
             },
@@ -392,7 +396,7 @@
                 showRefresh: true,                  //是否显示刷新按钮
                 minimumCountColumns: 2,             //最少允许的列数
                 clickToSelect: false,                //是否启用点击选中行
-                height: 600,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                //height: 600,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
                 uniqueId: "UserID",                     //每一行的唯一标识，一般为主键列
                 showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
                 cardView: false,                    //是否显示详细视图
@@ -410,7 +414,7 @@
                 limit: params.limit,   //页面大小
                 offset: params.offset,  //页码
                 userName: $("#tbxUserName").val(),
-                deptID: $("#tbxUserNum").val(),
+                deptID: $("#selectDeptID").text(),
                 userNum: $("#tbxUserNum").val()
             };
             return temp;
