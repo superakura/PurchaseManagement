@@ -130,11 +130,12 @@
 </div>
 <script src="~/ueditor.config.js"></script>
 <script src="~/ueditor.all.min.js"></script>
+
 <script>
     $(function () {
         var ue = UE.getEditor('editor');
 
-        var operateEvents = {
+        var operateEventsEdit = {
             'click .edit': function (e, value, row, index) {
                 if (row.FeedBackState == "待提交") {
                     $("label.error").hide();
@@ -151,11 +152,10 @@
                     $.post("/MaterialQualityFeedback/GetContent", encodeURIComponent(JSON.stringify(args)), function (result) {
                         UE.getEditor("editor").setContent(result["FeedbackContent"]);
                     });
-                    
+
                     $("#ddlMaterialQualityType ").val(row.MaterialQualityTypeID);
                 }
-                else
-                {
+                else {
                     toastr.warning("只能修改【待提交】信息！", "提示");
                 }
             },
@@ -188,7 +188,7 @@
                 }
             }
         };
-        function operateFormatter(value, row, index) {
+        function operateFormatterEdit(value, row, index) {
             return [
                 '<a class="edit" href="javascript:void(0)" title="edit">',
                 '<i class="glyphicon glyphicon-pencil"></i>',
@@ -198,46 +198,19 @@
                 '</a>'
             ].join('&nbsp;&nbsp;');
         }
-
-        var operateEventTitle = {
+        
+        var operateEvent = {
             'click .btnInfoShow': function (e, value, row, index) {
-                $("#logPanel").hide();
-                $('#showModal').modal('show');
-                $("#lblFeedbackTitle").text(row["FeedbackTitle"]);
-                $("#lblSupplierName").text(row["SupplierName"]);
-                $("#lblFeedbackType").text(row["MaterialQualityTypeName"]);
-                $("#lblFeedbackState").text(row["FeedBackState"]);
-                $("#lblErpOrderNum").text(row["ErpOrderNum"]);
-                $("#lblErpPlanNum").text(row["ErpPlanNum"]);
-                $("#lblMaterialNum").text(row["MaterialNum"]);
-                $("#lblDeptName").text(row["DeptName"]);
-
-                $("#lblInputPerson").text(row["InputPersonName"]);
-                $("#lblInputPersonPhone").text(row["InputPersonPhone"] + '/' + row["InputPersonMobile"]);
-                $("#lblInputDate").text(getJsonDateTime(row["InputDateTime"]));
-
-                $("#lblReplyPersonName").text(row["ReplyPersonName"] == null ? "" : row["ReplyPersonName"]);
-                $("#lblReplyDateTime").text(row["ReplyDateTime"] == null ? "" : getJsonDateTime(row["ReplyDateTime"]));
-
-                $("#lblCheckPersonName").text(row["CheckPersonName"] == null ? "" : row["CheckPersonName"]);
-                $("#lblCheckDateTime").text(row["CheckDateTime"] == null ? "" : getJsonDateTime(row["CheckDateTime"]));
-
-                var args = {"id": row["ID"]};
-                $.post("/MaterialQualityFeedback/GetContent", encodeURIComponent(JSON.stringify(args)), function (result) {
-                    $("#lblFeedbackContent").html(result["FeedbackContent"]);
-                    $("#lblReplyContent").html(result["ReplyContent"]);
-                });
+                @Html.Partial("InfoShowPublicCode");
                 if (row["FeedBackState"] != "审核通过") {
                     $("#panelReply").hide();
                 }
                 else {
                     $("#panelReply").show();
                 }
-
-                $("#InfoID").text(row["ID"]);
             }
         };
-        function operateFormatterTitle(value, row, index) {
+        function operateFormatter(value, row, index) {
             return "<a class='btnInfoShow' href='javascript:void(0)'>" + value + "</a>";
         }
 
@@ -259,28 +232,28 @@
             {
                 field: 'FeedbackTitle',
                 title: '反馈单名称',
-                events: operateEventTitle,
-                formatter: operateFormatterTitle
+                events: operateEvent,
+                formatter: operateFormatter
             },
             {
                 field: 'SupplierName',
                 title: '供应商名称',
-                visible:true
+                visible: true
             },
             {
                 field: 'MaterialNum',
                 title: '物资编码',
-                visible:false
+                visible: false
             },
             {
                 field: 'ErpPlanNum',
                 title: 'ERP计划预留号',
-                visible:false
+                visible: false
             },
             {
                 field: 'ErpOrderNum',
                 title: 'ERP订单号',
-                visible:false
+                visible: false
             },
             {
                 field: 'MaterialQualityTypeName',
@@ -308,7 +281,7 @@
             {
                 field: 'AcceptPersonName',
                 title: '接收人',
-                visible:false
+                visible: false
             },
             {
                 field: 'AcceptDateTime',
@@ -316,7 +289,7 @@
                 formatter: function (value, row, index) {
                     return value == null ? "" : getJsonDateTime(value)
                 },
-                visible:false
+                visible: false
             },
             {
                 field: 'ReplyPersonName',
@@ -332,7 +305,7 @@
             {
                 field: 'CheckPersonName',
                 title: '审核人',
-                visible:false
+                visible: false
             },
             {
                 field: 'CheckDateTime',
@@ -340,7 +313,7 @@
                 formatter: function (value, row, index) {
                     return value == null ? "" : getJsonDateTime(value);
                 },
-                visible:false
+                visible: false
             },
             {
                 field: 'AppraiseBillState',
@@ -384,10 +357,10 @@
                 field: 'operate',
                 title: '编辑&删除',
                 align: 'center',
-                events: operateEvents,
-                formatter: operateFormatter
+                events: operateEventsEdit,
+                formatter: operateFormatterEdit
             }];
-        
+
         //初始化BS-Table
         $('#bsTable').bootstrapTable({
             url: '/MaterialQualityFeedback/GetList',         //请求后台的URL（*）
@@ -420,9 +393,9 @@
             showExport: false,                     //是否显示导出
             columns: columns
         })
-        .on('all.bs.table', function (e, name, args) {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
+            .on('all.bs.table', function (e, name, args) {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
 
         //表单加载质量问题类型函数
         LoadProblemType();
@@ -469,7 +442,7 @@
                 var materialNum = $("#tbxMaterialNum").val();//物资编码
                 var erpOrderNum = $("#tbxErpOrderNum").val();//erp订单号
                 var erpPlanNum = $("#tbxErpPlanNum").val();//ERP计划预留号
-                if (materialNum!=""||erpOrderNum!="") {
+                if (materialNum != "" || erpOrderNum != "") {
                     if (contentCount > 0) {
                         if ($("#InfoID").text() != "") {
                             //保存后提交
@@ -552,8 +525,7 @@
                         toastr.error("问题内容必须填写！", "提示");
                     }
                 }
-                else
-                {
+                else {
                     toastr.error("【ERP计划预留号/物资编码】或【ERP订单号】必须填写一个！", "提示");
                 }
             };

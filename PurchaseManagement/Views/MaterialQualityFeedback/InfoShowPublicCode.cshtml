@@ -1,0 +1,28 @@
+﻿$("#logPanel").hide();
+$('#showModal').modal('show');
+
+$("#InfoID").text(row["ID"]);
+$("#lblFeedbackTitle").text(row["FeedbackTitle"]);
+$("#lblSupplierName").text(row["SupplierName"]);
+$("#lblFeedbackType").text(row["MaterialQualityTypeName"]);
+$("#lblFeedbackState").text(row["FeedBackState"]);
+$("#lblErpOrderNum").text(row["ErpOrderNum"] == null ? "" : row["ErpOrderNum"]);
+$("#lblErpPlanNum").text(row["ErpPlanNum"]);
+$("#lblMaterialNum").text(row["MaterialNum"]);
+$("#lblDeptName").text(row["DeptName"]);
+
+$("#lblInputPerson").text(row["InputPersonName"]);
+$("#lblInputPersonPhone").text(row["InputPersonPhone"] + '/' + row["InputPersonMobile"]);
+$("#lblInputDate").text(getJsonDateTime(row["InputDateTime"]));
+
+$("#lblReplyPersonName").text(row["ReplyPersonName"] == null ? "" : row["ReplyPersonName"]);
+$("#lblReplyDateTime").text(row["ReplyDateTime"] == null ? "" : getJsonDateTime(row["ReplyDateTime"]));
+
+$("#lblCheckPersonName").text(row["CheckPersonName"] == null ? "" : row["CheckPersonName"]);
+$("#lblCheckDateTime").text(row["CheckDateTime"] == null ? "" : getJsonDateTime(row["CheckDateTime"]));
+
+var args = { "id": row["ID"] };
+$.post("/MaterialQualityFeedback/GetContent", encodeURIComponent(JSON.stringify(args)), function (result) {
+    $("#lblFeedbackContent").html(result["FeedbackContent"]);
+    $("#lblReplyContent").html(result["ReplyContent"]);
+});

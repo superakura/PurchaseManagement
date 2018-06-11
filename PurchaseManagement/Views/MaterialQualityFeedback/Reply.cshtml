@@ -5,80 +5,78 @@
 }
 
 
-<div class="modal fade" id="myModal">
+<div class="modal fade" id="showModal">
     <div class="modal-dialog modal-lg">
-        <form id="formInfo">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h5 class="modal-title" id="modalTitle">物资质量反馈回复</h5>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        @Html.Partial("FeedBackInfo")
-                        <div id="replyContentInput">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-horizontal">
-                                        <label for="editor">输入回复内容</label>
-                                        <script id="editor" type="text/plain" style="height:100px;">
-                                        </script>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-horizontal">
-                                        <label>回退原因</label>
-                                        <textarea id="tbxBackReason" rows="1" cols="30" class="form-control"></textarea>
-                                    </div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title" id="modalTitle">物资质量反馈回复</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    @Html.Partial("FeedBackInfo")
+                    <div id="replyContentInput">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-horizontal">
+                                    <label for="editor">输入回复内容</label>
+                                    <script id="editor" type="text/plain" style="height:100px;">
+                                    </script>
                                 </div>
                             </div>
                         </div>
-                        <div id="panelAppraise" class="form-horizontal hidden">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label>考核类型:</label>
-                                    <label><input name="cbxAppraiseType" type="checkbox" value="质量" />质量</label>
-                                    <label><input name="cbxAppraiseType" type="checkbox" value="合同" />合同</label>
-                                    <label><input name="cbxAppraiseType" type="checkbox" value="服务" />服务</label>
-                                    <label><input name="cbxAppraiseType" type="checkbox" value="价格响应" />价格响应</label>
-                                    <label><input name="cbxAppraiseType" type="checkbox" value="诚信" />诚信</label>
-                                    <label><input name="cbxAppraiseType" type="checkbox" value="其他" />其他</label>
-                                </div>
-                                <div class="col-md-6">
-                                    <label>合同号或报价单或其他</label>
-                                    <input id="tbxAppraiseNum" class="form-control" type="text" />
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label>考核金额</label>
-                                    <input id="tbxAppraiseMoney" class="form-control" type="text" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label>考核分数</label>
-                                    <input id="tbxAppraiseMark" class="form-control" type="text" />
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label>考核标准</label>
-                                    <input id="tbxAppraiseStandard" class="form-control" type="text" />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-horizontal">
+                                    <label>回退原因</label>
+                                    <textarea id="tbxBackReason" rows="1" cols="30" class="form-control"></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <a href="#" id="btnAppraiseLink" class="hidden">生成考核单链接</a>
-                    <button type="button" id="btnAppraise" class="btn btn-success">生成考核单</button>
-                    <button type="button" id="btnBack" class="btn btn-danger">回退</button>
-                    <button type="button" id="btnReply" class="btn btn-primary">提交回复</button>
+                    <div id="panelAppraise" class="form-horizontal hidden">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>考核类型:</label>
+                                <label><input name="cbxAppraiseType" type="checkbox" value="质量" />质量</label>
+                                <label><input name="cbxAppraiseType" type="checkbox" value="合同" />合同</label>
+                                <label><input name="cbxAppraiseType" type="checkbox" value="服务" />服务</label>
+                                <label><input name="cbxAppraiseType" type="checkbox" value="价格响应" />价格响应</label>
+                                <label><input name="cbxAppraiseType" type="checkbox" value="诚信" />诚信</label>
+                                <label><input name="cbxAppraiseType" type="checkbox" value="其他" />其他</label>
+                            </div>
+                            <div class="col-md-6">
+                                <label>合同号或报价单或其他</label>
+                                <input id="tbxAppraiseNum" class="form-control" type="text" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>考核金额</label>
+                                <input id="tbxAppraiseMoney" class="form-control" type="text" />
+                            </div>
+                            <div class="col-md-6">
+                                <label>考核分数</label>
+                                <input id="tbxAppraiseMark" class="form-control" type="text" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>考核标准</label>
+                                <input id="tbxAppraiseStandard" class="form-control" type="text" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <a href="#" id="btnAppraiseLink" class="hidden">生成考核单链接</a>
+                <button type="button" id="btnAppraise" class="btn btn-success">生成考核单</button>
+                <button type="button" id="btnBack" class="btn btn-danger">回退</button>
+                <button type="button" id="btnReply" class="btn btn-primary">提交回复</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -108,33 +106,8 @@
 
     var operateEvents = {
         'click .btnInfoShow': function (e, value, row, index) {
-            $('#myModal').modal('show');
-            $("#logPanel").hide();
-            $("#modalTitle").text("质量反馈信息");
-            $("#lblFeedbackTitle").text(row["FeedbackTitle"]);
-            $("#lblSupplierName").text(row["SupplierName"]);
-            $("#lblFeedbackType").text(row["MaterialQualityTypeName"]);
-            $("#lblFeedbackState").text(row["FeedBackState"]);
-            $("#lblErpOrderNum").text(row["ErpOrderNum"]);
-            $("#lblErpPlanNum").text(row["ErpPlanNum"]);
-            $("#lblMaterialNum").text(row["MaterialNum"]);
-            $("#lblDeptName").text(row["DeptName"]);
-
-            $("#lblInputPerson").text(row["InputPersonName"]);
-            $("#lblInputPersonPhone").text(row["InputPersonPhone"] + '/' + row["InputPersonMobile"]);
-            $("#lblInputDate").text(getJsonDateTime(row["InputDateTime"]));
-
-            $("#lblReplyPersonName").text(row["ReplyPersonName"] == null ? "" : row["ReplyPersonName"]);
-            $("#lblReplyDateTime").text(row["ReplyDateTime"] == null ? "" : getJsonDateTime(row["ReplyDateTime"]));
-
-            $("#lblCheckPersonName").text(row["CheckPersonName"] == null ? "" : row["CheckPersonName"]);
-            $("#lblCheckDateTime").text(row["CheckDateTime"] == null ? "" : getJsonDateTime(row["CheckDateTime"]));
-
-            var args = { "id": row["ID"] };
-            $.post("/MaterialQualityFeedback/GetContent", encodeURIComponent(JSON.stringify(args)), function (result) {
-                $("#lblFeedbackContent").html(result["FeedbackContent"]);
-                $("#lblReplyContent").html(result["ReplyContent"]);
-            });
+            @Html.Partial("InfoShowPublicCode");
+            UE.getEditor("editor").setContent("");
 
             if (row["FeedBackState"] == "接收完成" || row["FeedBackState"] == "审核回退") {
                 $("#replyContentInput,#btnBack,#btnReply").show();
@@ -158,8 +131,6 @@
                 $("#btnAppraiseLink").attr("href", "#");
                 $("#btnAppraise").hide();
             }
-
-            $("#InfoID").text(row["ID"]);
         }
     };
 
@@ -364,12 +335,13 @@
                         };
                         $.post("/MaterialQualityFeedback/ReplyOk", encodeURIComponent(JSON.stringify(args)), function (result) {
                             if (result == "ok") {
-                                $("#myModal").modal("hide");
+                                $("#showModal").modal("hide");
                                 toastr.success("操作成功！", "提示");
                                 $("#bsTable").bootstrapTable('refresh');
                             }
                             else {
-                                $("#myModal").modal("hide");
+                                $("#showModal").modal("hide");
+                                console.log(result);
                                 toastr.error("系统错误，请联系5613877！", "提示");
                             }
                         });
@@ -404,12 +376,12 @@
                         };
                         $.post("/MaterialQualityFeedback/ReplyBack", encodeURIComponent(JSON.stringify(args)), function (result) {
                             if (result == "ok") {
-                                $("#myModal").modal("hide");
+                                $("#showModal").modal("hide");
                                 toastr.success("操作成功！", "提示");
                                 $("#bsTable").bootstrapTable('refresh');
                             }
                             else {
-                                $("#myModal").modal("hide");
+                                $("#showModal").modal("hide");
                                 toastr.error("系统错误，请联系5613877！", "提示");
                             }
                         });

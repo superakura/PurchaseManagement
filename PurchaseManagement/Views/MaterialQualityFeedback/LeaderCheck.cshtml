@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="modal fade" id="myModal">
+<div class="modal fade" id="showModal">
     <div class="modal-dialog modal-lg">
         <form id="formInfo">
             <div class="modal-content">
@@ -56,35 +56,7 @@
 <script>
     var operateEvents = {
         'click .btnInfoShow': function (e, value, row, index) {
-            $('#myModal').modal('show');
-            $("#logPanel").hide();
-            $("#modalTitle").text("质量反馈信息");
-            $("#tbxBackReason").val("");
-
-            $("#lblFeedbackTitle").text(row["FeedbackTitle"]);
-            $("#lblSupplierName").text(row["SupplierName"]);
-            $("#lblFeedbackType").text(row["MaterialQualityTypeName"]);
-            $("#lblFeedbackState").text(row["FeedBackState"]);
-            $("#lblErpOrderNum").text(row["ErpOrderNum"]);
-            $("#lblErpPlanNum").text(row["ErpPlanNum"]);
-            $("#lblMaterialNum").text(row["MaterialNum"]);
-            $("#lblDeptName").text(row["DeptName"]);
-
-            $("#lblInputPerson").text(row["InputPersonName"]);
-            $("#lblInputPersonPhone").text(row["InputPersonPhone"] + '/' + row["InputPersonMobile"]);
-            $("#lblInputDate").text(getJsonDateTime(row["InputDateTime"]));
-
-            $("#lblReplyPersonName").text(row["ReplyPersonName"] == null ? "" : row["ReplyPersonName"]);
-            $("#lblReplyDateTime").text(row["ReplyDateTime"] == null ? "" : getJsonDateTime(row["ReplyDateTime"]));
-
-            $("#lblCheckPersonName").text(row["CheckPersonName"] == null ? "" : row["CheckPersonName"]);
-            $("#lblCheckDateTime").text(row["CheckDateTime"] == null ? "" : getJsonDateTime(row["CheckDateTime"]));
-
-            var args = { "id": row["ID"] };
-            $.post("/MaterialQualityFeedback/GetContent", encodeURIComponent(JSON.stringify(args)), function (result) {
-                $("#lblFeedbackContent").html(result["FeedbackContent"]);
-                $("#lblReplyContent").html(result["ReplyContent"]);
-            });
+            @Html.Partial("InfoShowPublicCode");
 
             if (row["FeedBackState"] == "回复完毕") {
                 $("#panelBackReason,#btnBack,#btnCheck").show();
@@ -99,8 +71,6 @@
             //    $("#panelReply").show();
             //    $("#replyContentInput").hide();
             //}
-
-            $("#InfoID").text(row["ID"]);
         }
     };
 
@@ -301,12 +271,12 @@
                     };
                     $.post("/MaterialQualityFeedback/CheckOk", encodeURIComponent(JSON.stringify(args)), function (result) {
                         if (result == "ok") {
-                            $("#myModal").modal("hide");
+                            $("#showModal").modal("hide");
                             toastr.success("操作成功！", "提示");
                             $("#bsTable").bootstrapTable('refresh');
                         }
                         else {
-                            $("#myModal").modal("hide");
+                            $("#showModal").modal("hide");
                             toastr.error("系统错误，请联系5613877！", "提示");
                         }
                     });
@@ -337,12 +307,12 @@
                         };
                         $.post("/MaterialQualityFeedback/CheckBack", encodeURIComponent(JSON.stringify(args)), function (result) {
                             if (result == "ok") {
-                                $("#myModal").modal("hide");
+                                $("#showModal").modal("hide");
                                 toastr.success("操作成功！", "提示");
                                 $("#bsTable").bootstrapTable('refresh');
                             }
                             else {
-                                $("#myModal").modal("hide");
+                                $("#showModal").modal("hide");
                                 toastr.error("系统错误，请联系5613877！", "提示");
                             }
                         });

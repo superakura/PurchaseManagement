@@ -358,7 +358,7 @@ namespace PurchaseManagement.Controllers
             var result = from u in db.UserInfo
                          join r in db.UserRole on u.UserID equals r.UserID
                          join a in db.RoleAuthority on r.RoleID equals a.RoleID
-                         where a.AuthorityID == 27//物资质量反馈回复权限
+                         where a.AuthorityID == 27&&u.UserState==0//物资质量反馈回复权限
                          select new { u.UserName, u.UserID };
             return Json(result);
         }
@@ -652,5 +652,38 @@ namespace PurchaseManagement.Controllers
             return File(fileToSave, "application/msword", fileNameWord + ".doc");
         }
         #endregion
+
+        public JavaScriptResult test()
+        {
+            var info = @"$('#logPanel').hide();
+                $('#showModal').modal('show');
+
+                $('#InfoID').text(row['ID']);
+                $('#lblFeedbackTitle').text(row['FeedbackTitle']);
+                $('#lblSupplierName').text(row['SupplierName']);
+                $('#lblFeedbackType').text(row['MaterialQualityTypeName']);
+                $('#lblFeedbackState').text(row['FeedBackState']);
+                $('#lblErpOrderNum').text(row['ErpOrderNum'] == null ? '' : row['ErpOrderNum']);
+                $('#lblErpPlanNum').text(row['ErpPlanNum']);
+                $('#lblMaterialNum').text(row['MaterialNum']);
+                $('#lblDeptName').text(row['DeptName']);
+
+                $('#lblInputPerson').text(row['InputPersonName']);
+                $('#lblInputPersonPhone').text(row['InputPersonPhone'] + '/' + row['InputPersonMobile']);
+                $('#lblInputDate').text(getJsonDateTime(row['InputDateTime']));
+
+                $('#lblReplyPersonName').text(row['ReplyPersonName'] == null ? '' : row['ReplyPersonName']);
+                $('#lblReplyDateTime').text(row['ReplyDateTime'] == null ? '' : getJsonDateTime(row['ReplyDateTime']));
+
+                $('#lblCheckPersonName').text(row['CheckPersonName'] == null ? '' : row['CheckPersonName']);
+                $('#lblCheckDateTime').text(row['CheckDateTime'] == null ? '' : getJsonDateTime(row['CheckDateTime']));
+
+            var args = { 'id': row['ID'] };
+$.post(' / MaterialQualityFeedback / GetContent', encodeURIComponent(JSON.stringify(args)), function (result) {
+                $('#lblFeedbackContent').html(result['FeedbackContent']);
+                   $('#lblReplyContent').html(result['ReplyContent']);
+                });";
+            return JavaScript(info);
+        }
     }
 }

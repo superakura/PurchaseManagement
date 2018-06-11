@@ -702,6 +702,7 @@
     <Content Include="Views\Test\NgBsTable.cshtml" />
     <Content Include="Views\Test\NgBsTableDB.cshtml" />
     <Content Include="Views\MaterialQualityFeedback\SearchInfo.cshtml" />
+    <Content Include="Views\MaterialQualityFeedback\InfoShowPublicCode.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
