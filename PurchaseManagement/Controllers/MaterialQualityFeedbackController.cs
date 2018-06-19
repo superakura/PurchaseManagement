@@ -12,7 +12,6 @@ namespace PurchaseManagement.Controllers
     {
         private Models.DB db = new Models.DB();
 
-        #region view
         //视图--质量反馈单添加
         public ViewResult Add()
         {
@@ -48,9 +47,7 @@ namespace PurchaseManagement.Controllers
         {
             return View();
         }
-        #endregion
 
-        #region crud
         //直接提交或第一次保存操作
         [HttpPost]
         [ValidateInput(false)]
@@ -358,7 +355,7 @@ namespace PurchaseManagement.Controllers
             var result = from u in db.UserInfo
                          join r in db.UserRole on u.UserID equals r.UserID
                          join a in db.RoleAuthority on r.RoleID equals a.RoleID
-                         where a.AuthorityID == 27&&u.UserState==0//物资质量反馈回复权限
+                         where a.AuthorityID == 27 && u.UserState == 0//物资质量反馈回复权限
                          select new { u.UserName, u.UserID };
             return Json(result);
         }
@@ -624,9 +621,9 @@ namespace PurchaseManagement.Controllers
             builder.Write(info.SupplierName);
 
             var lastNum = db.MaterialQualityFeedback.Max(m => m.AppraiseBillNum);
-            lastNum = lastNum == 0 ? 1 : lastNum+1;
+            lastNum = lastNum == 0 ? 1 : lastNum + 1;
             var appraiseBillNum = "000" + (info.AppraiseBillNum == 0 ? lastNum : info.AppraiseBillNum).ToString();
-            var fileNameWord = "供应商日常考核记录单--" + appraiseBillNum.Substring(appraiseBillNum.Length-4,4);
+            var fileNameWord = "供应商日常考核记录单--" + appraiseBillNum.Substring(appraiseBillNum.Length - 4, 4);
             string fileToSave = System.IO.Path.Combine(Server.MapPath("/"), "FileOutput/" + fileNameWord + ".doc");
             if (System.IO.File.Exists(fileToSave))
             {
@@ -634,7 +631,7 @@ namespace PurchaseManagement.Controllers
             }
             doc.Save(fileToSave, SaveFormat.Doc);
 
-            info.AppraiseBillNum = info.AppraiseBillNum ==0?lastNum: info.AppraiseBillNum;
+            info.AppraiseBillNum = info.AppraiseBillNum == 0 ? lastNum : info.AppraiseBillNum;
             info.AppraiseBillInputTime = DateTime.Now;
             info.AppraiseBillState = "已生成";
 
@@ -651,7 +648,6 @@ namespace PurchaseManagement.Controllers
             db.SaveChanges();
             return File(fileToSave, "application/msword", fileNameWord + ".doc");
         }
-        #endregion
 
         public JavaScriptResult test()
         {

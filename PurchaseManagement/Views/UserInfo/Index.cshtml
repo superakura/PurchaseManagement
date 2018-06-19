@@ -10,7 +10,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><span id="myTitle">用户信息</span>--【当前部门：<span id="deptNameModal"></span>】</h4>
+                <h4 class="modal-title"><span id="myTitle">添加用户信息</span>--【当前部门：<span id="deptNameModal"></span>】</h4>
                 <span id="userIDModal"></span>
             </div>
             <div class="modal-body">
@@ -26,12 +26,12 @@
                                     <div class="row">
                                         <div class="col-md-5">
                                             <div class="form-group">
-                                                <label for="tbxUserName">姓名</label>
-                                                <input type="text" class="form-control" id="tbxUserName" placeholder="姓名">
-                                            </div>
-                                            <div class="form-group">
                                                 <label for="tbxUserNum">员工编号</label>
                                                 <input type="text" class="form-control" id="tbxUserNum" placeholder="员工编号">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="tbxUserName">姓名</label>
+                                                <input type="text" class="form-control" id="tbxUserName" placeholder="姓名">
                                             </div>
                                             <div class="form-group">
                                                 <label for="tbxUserDuty">职务</label>
@@ -63,7 +63,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
                         <div class="tab-pane" id="tab_2">
                             <div class="container-fluid">
@@ -166,6 +166,7 @@
 </div>
 <script>
     $(function () {
+        //加载部门信息
         var setting = {
             data: {
                 simpleData: {
@@ -194,138 +195,76 @@
                 }
             });
         };
-        
 
-        function getRoleList() {
-            $.post("/RoleInfo/GetListForUser", function (result) {
-                var temp = "";
-                $.each(result, function (index, val) {
-                    temp += "<tr><td><input name='cbxRole' type='checkbox' value='" + val["RoleID"] + "' /></td><td>" + val["RoleName"] + "</td>";
-                    temp += "<td>" + val["RoleDescribe"] + "</td>";
-                    temp += "</tr>";
+        //设置修改和删除用户操作
+        var operateEvents = {
+            'click .edit': function (e, value, row, index) {
+                $('#myModal').modal('show');
+                $("#myTitle").text("编辑用户信息");
+                $("#userIDModal").text(row.UserID);
+                var args = { "userID": row.UserID };
+                getRoleList();
+                LoadDeptList("#roleDeptList", setting);
+                $.post("/UserInfo/GetOne", encodeURIComponent(JSON.stringify(args)), function (result) {
+                    var userInfo = result["userInfo"];
+                    var roleInfo = result["userRole"];
+                    var deptControlInfo = result["userDept"];
+
+                    $("#tbxUserName").val(userInfo[0]["UserName"]);
+                    $("#tbxUserNum").val(userInfo[0]["UserNum"]).attr("disabled", "disabled");
+                    $("#tbxUserDuty").val(userInfo[0]["UserDuty"]);
+                    $("#tbxUserPhone").val(userInfo[0]["UserPhone"]);
+                    $("#tbxUserMobile").val(userInfo[0]["UserMobile"]);
+                    $("#tbxUserEmail").val(userInfo[0]["UserEmail"]);
+                    $("#tbxUserRemark").val(userInfo[0]["UserRemark"]);
+
+                    $.each(roleInfo, function (index, val) {
+                        $("input:checkbox[name='cbxRole'][value=" + val["RoleID"] + "]").attr("checked", "checked");
+                    });
+                    
+                    var treeObj = $.fn.zTree.getZTreeObj("roleDeptList");
+                    for (var i = 0; i < deptControlInfo.length; i++) {
+                        var node = treeObj.getNodeByParam("id", deptControlInfo[i]["DeptID"], null);
+                        treeObj.checkNode(node, true, false);
+                    }
                 });
-                $("#roleTableList").empty().append(temp);
-            });
-        }
-
-        //1.初始化Table
-        var oTable = new TableInit();
-        oTable.Init();
-
-        //2.初始化Button的点击事件
-        var oButtonInit = new ButtonInit();
-        oButtonInit.Init();
-
-        $("#btnAdd").click(function () {
-            //clearInfo();
-            $('#myModal').modal('show');
-            $("#myTitle").text("新增用户");
-            $("#deptNameModal").text($("#selectDept").text());
-            getRoleList();
-            LoadDeptList("#roleDeptList", setting);
-        });
-        function clearInfo() {
-            $("#tbxName,#tbxType,#tbxConflictCode,#tbxDescribe,#tbxMenuName,#tbxMenuIcon").val("");
-            $("#AuthorityID").text("");
-            $("label.error").hide();
-            $(".error").removeClass("error");
-        }
-        function getTreeChecked() {
-            var newsDeliver = {};
-            var treeObj = $.fn.zTree.getZTreeObj("roleDeptList");
-            var nodesInfo = treeObj.getCheckedNodes(true);
-            for (var i = 0; i < nodesInfo.length; i++) {
-                newsDeliver[i] += JSON.stringify(nodesInfo[i]["id"]);
-            }
-            return JSON.stringify(newsDeliver).replace(/undefined/g, "")
-        }
-        $("#btnSubmit").click(function () {
-            if ($("#userIDModal").text() != "") {
-                Ewin.confirm({ message: "确认要修改用户【" + $("#tbxUserName").val() + "】吗？" }).on(function (e) {
+            },
+            'click .remove': function (e, value, row, index) {
+                Ewin.confirm({ message: "确认要删除【" + row.AuthorityName + "】吗？" }).on(function (e) {
                     if (!e) {
                         return;
                     }
-                    else {
-                        var name = $("#tbxUserName").val();
-                        var duty = $("#tbxUserDuty").val();
-                        var phone = $("#tbxUserPhone").val();
-                        var email = $("#tbxUserEmail").val();
-                        var remark = $("#tbxUserRemark").val();
-                        var args = {
-                            "id": $("#userIDModal").text(),
-                            "name": name,
-                            "duty": duty,
-                            "email": email,
-                            "remark": remark,
-                            "phone": phone
-                        };
-                        $.post("/UserInfo/UpdateUserInfo", encodeURIComponent(JSON.stringify(args)), function (result) {
-                            if (result == "ok") {
-                                $("#myModal").modal("hide");
-                                toastr["success"]("修改用户【" + name + "】成功", "提示");
-                                clearInfo();
-                                getList($("#tbxCurPage").val(), $("#ddlPageSize").val());
-                            }
-                            else {
-                                $("#myModal").modal("hide");
-                                toastr["error"](result, "提示");
-                            }
-                        });
-                    }
+                    //写服务器后台删除方法,成功后执行页面删除数据
+                    var args = { "id": row.AuthorityID };
+                    $.post("/AuthorityInfo/Del", encodeURIComponent(JSON.stringify(args)), function (result) {
+                        if (result == "ok") {
+                            //后台删除成功后，调用前台删除方法
+                            $('#bsTable').bootstrapTable('remove', {
+                                field: 'AuthorityID',
+                                values: [row.AuthorityID]
+                            });
+                            toastr.success("删除【" + row.AuthorityName + "】成功！", "提示")
+                        }
+                        else {
+                            toastr.error("保存错误，请联系5613877！", "提示");
+                        }
+                    });
+
                 });
             }
-            else {
-                Ewin.confirm({ message: "确认要增加用户【" + $("#tbxUserName").val() + "】吗？" }).on(function (e) {
-                    if (!e) {
-                        return;
-                    }
-                    else {
-                        var userName = $("#tbxUserName").val();
-                        var userNum = $("#tbxUserNum").val();
-                        var userDuty = $("#tbxUserDuty").val();
-                        var userPhone = $("#tbxUserPhone").val();
-                        var userMobile = $("#tbxUserMobile").val();
-                        var userEmail = $("#tbxUserEmail").val();
-                        var userRemark = $("#tbxUserRemark").val();
-                        var deptID = $("#selectDeptID").text();//用户信息管理--当前部门隐藏ID
+        };
+        function operateFormatter(value, row, index) {
+            return [
+                '<a class="edit" href="javascript:void(0)" title="edit">',
+                '<i class="glyphicon glyphicon-pencil"></i>',
+                '</a>  ',
+                '<a class="remove" href="javascript:void(0)" title="Remove">',
+                '<i class="glyphicon glyphicon-trash"></i>',
+                '</a>'
+            ].join('&nbsp;&nbsp;');
+        }
 
-                        
-                        var deptList = getTreeChecked();
-                        var roleList = {};
-                        $("input:checkbox[name='cbxRole']:checked").each(function (index, val) {
-                            roleList[index] = $(this).val();
-                        });
-                        var args = {
-                            "userName": userName,
-                            "userNum": userNum,
-                            "userDuty": userDuty,
-                            "userPhone": userPhone,
-                            "userMobile": userMobile,
-                            "userEmail": userEmail,
-                            "deptID": deptID,
-                            "userRemark": userRemark,
-                            "roleList": roleList,
-                            "deptList": deptList
-                        };
-                        $.post("/UserInfo/Insert", encodeURIComponent(JSON.stringify(args)), function (result) {
-                            if (result == "ok") {
-                                $("#myModal").modal("hide");
-                                toastr["success"]("添加用户【" + name + "】成功", "提示");
-                                $("#bsTable").bootstrapTable('refresh');
-                            }
-                            else {
-                                $("#myModal").modal("hide");
-                                toastr["error"]("保存错误，请联系5613877！" + result, "提示");
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    });
-
-    var TableInit = function () {
-        var oTableInit = new Object();
+        //设置表格列信息
         var columns = [
             {
                 checkbox: true
@@ -373,43 +312,9 @@
                 events: operateEvents,
                 formatter: operateFormatter
             }];
-        //初始化Table
-        oTableInit.Init = function () {
-            $('#bsTable').bootstrapTable({
-                url: '/UserInfo/GetList',         //请求后台的URL（*）
-                contentType: 'application/x-www-form-urlencoded',
-                method: 'post',                     //请求方式（*）
-                toolbar: '#toolbar',                //工具按钮用哪个容器
-                striped: true,                      //是否显示行间隔色
-                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
-                pagination: true,                   //是否显示分页（*）
-                sortable: false,                     //是否启用排序
-                sortOrder: "asc",                   //排序方式
-                queryParams: oTableInit.queryParams,//传递参数（*）
-                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
-                pageNumber: 1,                       //初始化加载第一页，默认第一页
-                pageSize: 10,                       //每页的记录行数（*）
-                pageList: [10, 15, 20, 25],        //可供选择的每页的行数（*）
-                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
-                strictSearch: true,
-                showColumns: true,                  //是否显示所有的列
-                showRefresh: true,                  //是否显示刷新按钮
-                minimumCountColumns: 2,             //最少允许的列数
-                clickToSelect: false,                //是否启用点击选中行
-                //height: 600,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
-                uniqueId: "UserID",                     //每一行的唯一标识，一般为主键列
-                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
-                cardView: false,                    //是否显示详细视图
-                detailView: false,                   //是否显示父子表
-                paginationPreText: "上一页",
-                paginationNextText: "下一页",
-                showExport: false,                     //是否显示导出
-                columns: columns
-            });
-        };
 
-        //得到查询的参数
-        oTableInit.queryParams = function (params) {
+        //设置查询参数
+        var queryParams = function (params) {
             var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
                 limit: params.limit,   //页面大小
                 offset: params.offset,  //页码
@@ -419,76 +324,177 @@
             };
             return temp;
         };
-        return oTableInit;
-    };
-    window.operateEvents = {
-        'click .edit': function (e, value, row, index) {
-            //alert('You click like action, row: ' + JSON.stringify(row));
-            //console.log(row.AuthorityID);
-            $("label.error").hide();
-            $(".error").removeClass("error");
-            $('#myModal').modal('show');
-            $("#modalTitle").text("编辑权限信息");
-            $("#AuthorityID").text(row.AuthorityID);
-            var args = { "id": row.AuthorityID };
-            $.post("/AuthorityInfo/GetOne", encodeURIComponent(JSON.stringify(args)), function (result) {
-                $("#tbxName").val(result["AuthorityName"]);
-                $("#ddlType").val(result["AuthorityType"]);
-                $("#tbxDescribe").val(result["AuthorityDescribe"]);
-                $("#tbxConflictCode").val(result["ConflictCode"]);
-                $("#tbxMenuUrl").val(result["MenuUrl"]);
-                $("#tbxMenuFatherName").val(result["MenuFatherID"]);
-                $("#tbxMenuOrder").val(result["MenuOrder"]);
-                $("#tbxMenuName").val(result["MenuName"]);
-                $("#tbxMenuIcon").val(result["MenuIcon"]);
-            });
-        },
-        'click .remove': function (e, value, row, index) {
-            Ewin.confirm({ message: "确认要删除【" + row.AuthorityName + "】吗？" }).on(function (e) {
-                if (!e) {
-                    return;
-                }
-                //写服务器后台删除方法,成功后执行页面删除数据
-                var args = { "id": row.AuthorityID };
-                $.post("/AuthorityInfo/Del", encodeURIComponent(JSON.stringify(args)), function (result) {
-                    if (result == "ok") {
-                        //后台删除成功后，调用前台删除方法
-                        $('#bsTable').bootstrapTable('remove', {
-                            field: 'AuthorityID',
-                            values: [row.AuthorityID]
-                        });
-                        toastr.success("删除【" + row.AuthorityName + "】成功！", "提示")
-                    }
-                    else {
-                        toastr.error("保存错误，请联系5613877！", "提示");
-                    }
-                });
 
+        //设置bs-table
+        $('#bsTable').bootstrapTable({
+            url: '/UserInfo/GetList',         //请求后台的URL（*）
+            contentType: 'application/x-www-form-urlencoded',
+            method: 'post',                     //请求方式（*）
+            toolbar: '#toolbar',                //工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,                   //是否显示分页（*）
+            sortable: false,                     //是否启用排序
+            sortOrder: "asc",                   //排序方式
+            queryParams: queryParams,//传递参数（*）
+            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber: 1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                       //每页的记录行数（*）
+            pageList: [10, 15, 20, 25],        //可供选择的每页的行数（*）
+            search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            strictSearch: true,
+            showColumns: true,                  //是否显示所有的列
+            showRefresh: true,                  //是否显示刷新按钮
+            minimumCountColumns: 2,             //最少允许的列数
+            clickToSelect: false,                //是否启用点击选中行
+            //height: 600,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "UserID",                     //每一行的唯一标识，一般为主键列
+            showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                   //是否显示父子表
+            paginationPreText: "上一页",
+            paginationNextText: "下一页",
+            showExport: false,                     //是否显示导出
+            columns: columns
+        });
+
+        //获取用户添加/修改表单中用户所拥有权限的信息
+        function getRoleList() {
+            $.post("/RoleInfo/GetListForUser", function (result) {
+                var temp = "";
+                $.each(result, function (index, val) {
+                    temp += "<tr><td><input name='cbxRole' id='" + val["RoleID"] + "' type='checkbox' value='" + val["RoleID"] + "' /></td>";
+                    temp += "<td>" + val["RoleName"] + "</td>";
+                    temp += "<td>" + val["RoleDescribe"] + "</td>";
+                    temp += "</tr>";
+                });
+                $("#roleTableList").empty().append(temp);
             });
         }
-    };
-    function operateFormatter(value, row, index) {
-        return [
-            '<a class="edit" href="javascript:void(0)" title="edit">',
-            '<i class="glyphicon glyphicon-pencil"></i>',
-            '</a>  ',
-            '<a class="remove" href="javascript:void(0)" title="Remove">',
-            '<i class="glyphicon glyphicon-trash"></i>',
-            '</a>'
-        ].join('&nbsp;&nbsp;');
-    }
-    var ButtonInit = function () {
-        var oInit = new Object();
 
-        oInit.Init = function () {
-            //初始化页面上面的按钮事件
-            $("#btnSearch").click(function () {
-                $("#bsTable").bootstrapTable('refresh');
+        //搜索按钮
+        $("#btnSearch").click(function () {
+            $("#bsTable").bootstrapTable('refresh');
+        });
+
+        //添加用户按钮
+        $("#btnAdd").click(function () {
+            clearInfo();
+            $('#myModal').modal('show');
+            $("#deptNameModal").text($("#selectDept").text());
+            getRoleList();
+            LoadDeptList("#roleDeptList", setting);
+        });
+
+        //清理用户添加/修改表单
+        function clearInfo() {
+            $("#tab_1 input").val("");
+            $("#userIDModal").text("");
+            $("label.error").hide();
+            $(".error").removeClass("error");
+        }
+
+        //获取模拟框中，选择部门的信息
+        function getTreeChecked() {
+            var newsDeliver = {};
+            var treeObj = $.fn.zTree.getZTreeObj("roleDeptList");
+            var nodesInfo = treeObj.getCheckedNodes(true);
+            for (var i = 0; i < nodesInfo.length; i++) {
+                newsDeliver[i] += JSON.stringify(nodesInfo[i]["id"]);
+            }
+            return JSON.stringify(newsDeliver).replace(/undefined/g, "")
+        }
+
+        //提交按钮
+        $("#btnSubmit").click(function () {
+            //获取用户的基本信息
+            var userNum = $("#tbxUserNum").val();
+            var userName = $("#tbxUserName").val();
+            var userDuty = $("#tbxUserDuty").val();
+            var userPhone = $("#tbxUserPhone").val();
+            var userMobile = $("#tbxUserMobile").val();
+            var userEmail = $("#tbxUserEmail").val();
+            var userRemark = $("#tbxUserRemark").val();
+
+            //获取用户所能管理的部门
+            var deptList = getTreeChecked();
+
+            //获取用户所用户的角色信息
+            var roleList = {};
+            $("input:checkbox[name='cbxRole']:checked").each(function (index, val) {
+                roleList[index] = $(this).val();
             });
-        };
 
-        return oInit;
-    };
+            //判断是添加操作还是修改操作
+            if ($("#userIDModal").text() != "") {
+                Ewin.confirm({ message: "确认要修改用户【" + userName + "】吗？" }).on(function (e) {
+                    if (!e) {
+                        return;
+                    }
+                    else {
+                        //不能修改用户的员工编号信息，不能修改用户所在的单位。
+                        //修改单位单独用员工调动功能实现
+                        var args = {
+                            "userID": $("#userIDModal").text(),
+                            "userName": userName,
+                            "userDuty": userDuty,
+                            "userPhone": userPhone,
+                            "userMobile": userMobile,
+                            "userEmail": userEmail,
+                            "userRemark": userRemark,
+                            "roleList": roleList,
+                            "deptList": deptList
+                        };
+                        $.post("/UserInfo/Update", encodeURIComponent(JSON.stringify(args)), function (result) {
+                            if (result == "ok") {
+                                $("#myModal").modal("hide");
+                                toastr["success"]("修改用户【" + userName + "】成功", "提示");
+                                $("#bsTable").bootstrapTable('refresh');
+                            }
+                            else {
+                                $("#myModal").modal("hide");
+                                toastr["error"](result, "提示");
+                            }
+                        });
+                    }
+                });
+            }
+            else {
+                Ewin.confirm({ message: "确认要增加用户【" + userName + "】吗？" }).on(function (e) {
+                    if (!e) {
+                        return;
+                    }
+                    else {
+                        var deptID = $("#selectDeptID").text();//用户信息管理--当前部门隐藏ID
+
+                        var args = {
+                            "userName": userName,
+                            "userNum": userNum,
+                            "userDuty": userDuty,
+                            "userPhone": userPhone,
+                            "userMobile": userMobile,
+                            "userEmail": userEmail,
+                            "userRemark": userRemark,
+                            "deptID": deptID,
+                            "roleList": roleList,
+                            "deptList": deptList
+                        };
+                        $.post("/UserInfo/Insert", encodeURIComponent(JSON.stringify(args)), function (result) {
+                            if (result == "ok") {
+                                $("#myModal").modal("hide");
+                                toastr["success"]("添加用户【" + userName + "】成功", "提示");
+                                $("#bsTable").bootstrapTable('refresh');
+                            }
+                            else {
+                                $("#myModal").modal("hide");
+                                toastr["error"]("保存错误，请联系5613877！" + result, "提示");
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
 </script>
 
 

@@ -402,7 +402,6 @@
     <Content Include="net\controller.ashx" />
     <Content Include="net\README.md" />
     <Content Include="net\Web.config" />
-    <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="lang\en\en.js" />
     <Content Include="lang\en\images\addimage.png" />
     <Content Include="lang\en\images\alldeletebtnhoverskin.png" />
@@ -437,8 +436,9 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\Ewin.js" />
     <Content Include="Scripts\html5shiv.js" />
-    <Content Include="Scripts\jquery-1.9.1.js" />
-    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <None Include="Scripts\jquery-1.11.3.intellisense.js" />
+    <Content Include="Scripts\jquery-1.11.3.js" />
+    <Content Include="Scripts\jquery-1.11.3.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.messages_cn.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -675,7 +675,6 @@
   <ItemGroup>
     <Content Include="Views\web.config" />
     <None Include="packages.config" />
-    <Content Include="Scripts\jquery-1.9.1.min.map" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Test\Chat.cshtml" />
     <Content Include="Views\NoticeInfo\Index.cshtml" />
@@ -703,6 +702,7 @@
     <Content Include="Views\Test\NgBsTableDB.cshtml" />
     <Content Include="Views\MaterialQualityFeedback\SearchInfo.cshtml" />
     <Content Include="Views\MaterialQualityFeedback\InfoShowPublicCode.cshtml" />
+    <Content Include="Scripts\jquery-1.11.3.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

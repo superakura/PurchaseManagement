@@ -54,9 +54,12 @@
             </small>
         </div>
     </div>
-    <script src="~/Scripts/jquery-1.9.1.min.js"></script>
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <script>
+        if (navigator.appName == "Microsoft Internet Explorer" && parseInt(navigator.appVersion.split(";")[1].replace(/[ ]/g, "").replace("MSIE", "")) < 9) {
+            alert("您的浏览器版本过低，请下载IE9及以上版本");
+        }
         $(function () {
             getNoticeInfo();
             function getNoticeInfo() {
@@ -70,12 +73,10 @@
             }
             //主页显示功能
             //统计报表功能
-            //系统说明文档
             //注释，代码整理
-            //js部分代码共享
-            //物资质量反馈信息查询功能
-            //测试数据清理
-            //firefox select
+            //物资质量反馈信息查询功能，提报单位、erp编码、物资编码
+            //列表、详细信息页面增加
+            //ajax如何测试
         });
     </script>
 </body>
