@@ -132,11 +132,11 @@
                         <form class="form-inline" role="form">
                             <div class="form-group">
                                 <label>用户姓名：</label>
-                                <input type="text" class="form-control" id="tbxUserName" placeholder="用户姓名">
+                                <input type="text" class="form-control" id="tbxUserNameSearch" placeholder="用户姓名">
                             </div>
                             <div class="form-group">
                                 <label for="tbxUserNum">员工编号：</label>
-                                <input type="text" class="form-control" id="tbxUserNum" placeholder="员工编号">
+                                <input type="text" class="form-control" id="tbxUserNumSearch" placeholder="员工编号">
                             </div>
                             <button type="button" id="btnSearch" class="btn btn-primary">
                                 <span class="glyphicon glyphicon-search"></span> 查询
@@ -183,6 +183,7 @@
             }
         };
         function zTreeOnClick(event, treeId, treeNode) {
+            
         };
         function LoadDeptList(ele, set) {
             $("#roleDeptList").remove("li");
@@ -195,6 +196,11 @@
                 }
             });
         };
+
+        //iframe部门列表中，点击部门查看人员事件定义
+        window.onTreeClick = function () {
+            $("#bsTable").bootstrapTable('refresh');
+        }
 
         //设置修改和删除用户操作
         var operateEvents = {
@@ -230,20 +236,20 @@
                 });
             },
             'click .remove': function (e, value, row, index) {
-                Ewin.confirm({ message: "确认要删除【" + row.AuthorityName + "】吗？" }).on(function (e) {
+                Ewin.confirm({ message: "确认要删除【" + row.UserNum + " | " + row.UserName + "】吗？" }).on(function (e) {
                     if (!e) {
                         return;
                     }
                     //写服务器后台删除方法,成功后执行页面删除数据
-                    var args = { "id": row.AuthorityID };
-                    $.post("/AuthorityInfo/Del", encodeURIComponent(JSON.stringify(args)), function (result) {
+                    var args = { "userID": row.UserID };
+                    $.post("/UserInfo/Del", encodeURIComponent(JSON.stringify(args)), function (result) {
                         if (result == "ok") {
                             //后台删除成功后，调用前台删除方法
                             $('#bsTable').bootstrapTable('remove', {
-                                field: 'AuthorityID',
-                                values: [row.AuthorityID]
+                                field: 'UserID',
+                                values: [row.UserID]
                             });
-                            toastr.success("删除【" + row.AuthorityName + "】成功！", "提示")
+                            toastr.success("删除【" + row.UserName + "】成功！", "提示")
                         }
                         else {
                             toastr.error("保存错误，请联系5613877！", "提示");
@@ -318,9 +324,9 @@
             var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
                 limit: params.limit,   //页面大小
                 offset: params.offset,  //页码
-                userName: $("#tbxUserName").val(),
+                userName: $("#tbxUserNameSearch").val(),
                 deptID: $("#selectDeptID").text(),
-                userNum: $("#tbxUserNum").val()
+                userNum: $("#tbxUserNumSearch").val()
             };
             return temp;
         };
@@ -379,16 +385,25 @@
 
         //添加用户按钮
         $("#btnAdd").click(function () {
-            clearInfo();
-            $('#myModal').modal('show');
-            $("#deptNameModal").text($("#selectDept").text());
-            getRoleList();
-            LoadDeptList("#roleDeptList", setting);
+            var deptInfo = $("#selectDept").text();
+            if (deptInfo == "") {
+                toastr.error("请先选择员工所属的部门", "提示");
+            }
+            else {
+                clearInfo();
+                $('#myModal').modal('show');
+                $("#myTitle").text("新增用户");
+                $("#tbxUserNum").attr("disabled", false);
+                $("#deptNameModal").text(deptInfo);
+                getRoleList();
+                LoadDeptList("#roleDeptList", setting);
+            }
         });
 
         //清理用户添加/修改表单
         function clearInfo() {
             $("#tab_1 input").val("");
+            $("#tab_1 textarea").val("");
             $("#userIDModal").text("");
             $("label.error").hide();
             $(".error").removeClass("error");
@@ -487,7 +502,7 @@
                             }
                             else {
                                 $("#myModal").modal("hide");
-                                toastr["error"]("保存错误，请联系5613877！" + result, "提示");
+                                toastr["error"]("保存错误：" + result, "提示");
                             }
                         });
                     }

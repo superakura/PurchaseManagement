@@ -10,7 +10,11 @@ namespace PurchaseManagement.Controllers
 {
     public class UserInfoController : Controller
     {
-        //更改用户所在单位操作。
+        //1、更改用户所在单位操作,对用户的调动操作权限。
+        //2、用户根据所管理单位范围，管理相应人员。
+        //3、根据用户【可授权】的角色，加载相应角色，赋予相应人员权限。
+        //4、修改用户时，权限和管理部门有时无法加载。
+        //5、限制向二级单位里面增加用户操作
         private Models.DB db = new Models.DB();
 
         public ViewResult Index()
@@ -34,6 +38,8 @@ namespace PurchaseManagement.Controllers
             int.TryParse(Request.Form["deptID"], out deptID);
 
             var userID = Commen.GetUserFromSession().UserID;
+
+            //用户所能控制得部门列表
             var userDept = db.UserDept.Where(w => w.UserID == userID).Select(s => s.DeptID).ToArray();
 
             var result = (from u in db.UserInfo
@@ -55,18 +61,19 @@ namespace PurchaseManagement.Controllers
                               u.UserMobile,
                               u.UserRemark
                           });
-            //if (deptID != 1)
-            //{
-            //    var count = db.UserInfo.Where(w => w.UserDeptID == deptID).Count();
-            //    if (count == 0)
-            //    {
-            //        result = result.Where(w => db.DeptInfo.Where(t => t.DeptFatherID == deptID).Select(s => s.DeptID).Contains(w.UserDeptID));
-            //    }
-            //    else
-            //    {
-            //        result = result.Where(w => w.UserDeptID == deptID);
-            //    }
-            //}
+            //判断所选单位是否为大庆炼化公司
+            if (deptID != 1)
+            {
+                var count = db.UserInfo.Where(w => w.UserDeptID == deptID).Count();
+                if (count == 0)
+                {
+                    result = result.Where(w => db.DeptInfo.Where(t => t.DeptFatherID == deptID).Select(s => s.DeptID).Contains(w.UserDeptID));
+                }
+                else
+                {
+                    result = result.Where(w => w.UserDeptID == deptID);
+                }
+            }
 
             if (!string.IsNullOrEmpty(userName))
             {
@@ -85,33 +92,59 @@ namespace PurchaseManagement.Controllers
             try
             {
                 var infoList =
-   JsonConvert.DeserializeObject<Dictionary<String, Object>>(HttpUtility.UrlDecode(Request.Form.ToString()));
-
-                #region 添加用户基本信息
+  JsonConvert.DeserializeObject<Dictionary<String, Object>>(HttpUtility.UrlDecode(Request.Form.ToString()));
+                var userNum = infoList["userNum"].ToString();//员工编号
                 var userName = infoList["userName"].ToString();
-                var userNum = infoList["userNum"].ToString();
                 var userEmail = infoList["userEmail"].ToString();
                 var deptID = 0;
-                int.TryParse(infoList["deptID"].ToString(), out deptID);
-                var userDuty = infoList["userDuty"].ToString();
-                var userPhone = infoList["userPhone"].ToString();
-                var userMobile = infoList["userMobile"].ToString();
+                int.TryParse(infoList["deptID"].ToString(), out deptID);//用户所在单位
+                var userDuty = infoList["userDuty"].ToString();//职务
+                var userPhone = infoList["userPhone"].ToString();//办公电话
+                var userMobile = infoList["userMobile"].ToString();//手机
                 var userRemark = infoList["userRemark"].ToString();
 
-                Models.UserInfo userInfo = new Models.UserInfo();
-                userInfo.UserName = userName;
-                userInfo.UserNum = userNum;
-                userInfo.UserDuty = userDuty;
-                userInfo.UserState = 0;
-                userInfo.UserDeptID = deptID;
-                userInfo.UserEmail = userEmail == string.Empty ? null : userEmail;
-                userInfo.UserPhone = userPhone;
-                userInfo.UserRemark = userRemark;
-                userInfo.UserMobile = userMobile;
+                //按员工编号userNum检查数据库中用户信息是否存在
+                Models.UserInfo userInfo = db.UserInfo.Where(w => w.UserNum == userNum).FirstOrDefault();
+                if (userInfo==null)//如果用户不存在，直接插入用户信息
+                {
+                    #region 插入用户基本信息
+                    userInfo = new Models.UserInfo();
+                    userInfo.UserName = userName;
+                    userInfo.UserNum = userNum;
+                    userInfo.UserDuty = userDuty;
+                    userInfo.UserState = 0;
+                    userInfo.UserDeptID = deptID;
+                    userInfo.UserEmail = userEmail == string.Empty ? null : userEmail;
+                    userInfo.UserPhone = userPhone;
+                    userInfo.UserRemark = userRemark;
+                    userInfo.UserMobile = userMobile;
 
-                db.UserInfo.Add(userInfo);
-                db.SaveChanges();
-                #endregion
+                    db.UserInfo.Add(userInfo);
+                    db.SaveChanges();
+                    #endregion
+                }
+                else//如果不存在用户信息，进一步判断用户是否删除。
+                {
+                    var isDelUser = userInfo.UserState;
+                    if (isDelUser == 0)//如果未删除，不能修改用户信息，返回用户已存在，不能修改。
+                    {
+                        return "用户信息已存在！";
+                    }
+                    else//如果已删除，更新用户信息，将用户状态更改为未删除状态，更新用户所在部门
+                    {
+                        #region 更新已标记删除用户的信息，将用户状态更改为未删除
+                        userInfo.UserName = userName;
+                        userInfo.UserDuty = userDuty;
+                        userInfo.UserState = 0;//将用户状态更改为未删除
+                        userInfo.UserDeptID = deptID;//将用户部门更改为选择的部门
+                        userInfo.UserEmail = userEmail == string.Empty ? null : userEmail;
+                        userInfo.UserPhone = userPhone;
+                        userInfo.UserRemark = userRemark;
+                        userInfo.UserMobile = userMobile;
+                        db.SaveChanges();
+                        #endregion
+                    }
+                }
 
                 #region 删除用户已经存在的权限和管理部门
                 var userDeptExist = db.UserDept.Where(w => w.UserID == userInfo.UserID).ToList();
@@ -244,7 +277,7 @@ namespace PurchaseManagement.Controllers
                 return ex.Message;
             }
         }
-
+        
         [HttpPost]
         public JsonResult GetOne()
         {
@@ -278,7 +311,9 @@ namespace PurchaseManagement.Controllers
                 int.TryParse(infoList["userID"].ToString(), out userID);
 
                 var userInfo = db.UserInfo.Find(userID);
-                db.UserInfo.Remove(userInfo);
+                userInfo.UserState = 1;
+                db.SaveChanges();
+
                 db.UserRole.RemoveRange(db.UserRole.Where(w => w.UserID == userID));
                 db.UserDept.RemoveRange(db.UserDept.Where(w=>w.UserID==userID));
                 db.SaveChanges();

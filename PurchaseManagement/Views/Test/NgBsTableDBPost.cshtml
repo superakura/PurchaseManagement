@@ -1,0 +1,302 @@
+﻿
+@{
+    ViewBag.Title = "NgBsTableDBPost";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*
+    1、验证
+    2、select初始选中
+*@
+
+<div ng-app="myApp" ng-controller="MainController">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModal-label">{{title}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="formInfo" novalidate>
+                                <div class="form-group">
+                                    <label>姓名</label>
+                                    <input class="form-control" name="item.Name" ng-model="item.Name" required />
+                                </div>
+                                <div class="form-group">
+                                    <label>年龄</label>
+                                    <input class="form-control" name="item.Age" ng-model="item.Age" />
+                                </div>
+                                <div class="form-group">
+                                    <label>性别</label>
+                                    <select ng-model="item.Sex" ng-init="item.Sex='男'" id="item.Sex" name="item.Sex" class="form-control">
+                                        <option value="男">男</option>
+                                        <option value="女">女</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>职务</label>
+                                    <input class="form-control" name="item.Duty" ng-model="item.Duty" />
+                                </div>
+                                <div class="form-group">
+                                    <label>电话</label>
+                                    <input class="form-control" name="item.Phone" ng-model="item.Phone" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input class="form-control" type="email" ng-model="item.Email" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Remark</label>
+                                    <input class="form-control" ng-model="item.Remark" />
+                                </div>
+                                <span>{{item.Id}}</span>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" ng-click="save();">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box box-danger">
+        <div class="box-header">
+            <h3 class="box-title">NgBsTableDBPost</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label for="tbxNameSearch">姓名：</label>
+                            <input type="text" ng-model="search.Name" class="form-control" placeholder="姓名">
+                        </div>
+                        <div class="form-group">
+                            <label for="tbxDutySearch">职务：</label>
+                            <input type="text" class="form-control" ng-model="search.Duty" placeholder="职务">
+                        </div>
+                        <button type="button" ng-click="search();" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-search"></span> 查询
+                        </button>
+                        <button type="button" ng-click="ResetSearch();" class="btn bg-navy">
+                            <span class="glyphicon glyphicon-repeat"></span> 重置
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="toolbar" class="btn-group">
+                        @*<button class="btn btn-primary" ng-click="add();"><i class="glyphicon glyphicon-plus"></i> 新增</button>*@
+                        <button class="btn btn-info" id="btnAdd"><i class="glyphicon glyphicon-plus"></i> 新增</button>
+                    </div>
+                    <table id="bsTable"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    angular.module('myApp', [])
+        .controller('MainController', function ($scope, $http) {
+            $scope.search = {};//初始化，否则找不到子对象。
+
+            //初始化BS-Table
+            var operateEvents = {
+                'click .edit': function (e, value, row, index) {
+                    $scope.item = row;
+                    $scope.title = "修改";
+                    $scope.$apply();
+                    $("#myModal").modal("show");
+                    $("label.error").hide();
+                    $(".error").removeClass("error");
+                },
+                'click .remove': function (e, value, row, index) {
+
+                }
+            };
+            function operateFormatter(value, row, index) {
+                return [
+                    '<a class="edit" href="javascript:void(0)" title="edit">',
+                    '<i class="glyphicon glyphicon-pencil"></i>',
+                    '</a>  ',
+                    '<a class="remove" href="javascript:void(0)" title="Remove">',
+                    '<i class="glyphicon glyphicon-trash"></i>',
+                    '</a>'
+                ].join('&nbsp;&nbsp;');
+            }
+            var columns = [
+                {
+                    checkbox: true
+                },
+                {
+                    title: '序号',
+                    formatter: function (value, row, index) {
+                        return index + 1;
+                    }
+                },
+                {
+                    field: 'Id',
+                    title: '数据ID',
+                    visible: false,//false表示不显示
+                },
+                {
+                    field: 'Name',
+                    title: '姓名'
+                },
+                {
+                    field: 'Age',
+                    title: '年龄'
+                },
+                {
+                    field: 'Sex',
+                    title: '性别'
+                },
+                {
+                    field: 'Duty',
+                    title: '职务'
+                },
+                {
+                    field: 'Phone',
+                    title: '电话'
+                },
+                {
+                    field: 'Email',
+                    title: 'Email'
+                },
+                {
+                    field: 'operate',
+                    title: '编辑&删除',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }];
+            var queryParams = function (params) {
+                var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                    limit: params.limit,   //页面大小
+                    offset: params.offset,  //页码
+                    nameSearch: $scope.search.Name == null ? "" : $scope.search.Name,
+                    dutySearch: $scope.search.Duty == null ? "" : $scope.search.Duty
+                };
+                return temp;
+            };
+            $('#bsTable').bootstrapTable({
+                url: '/Test/List',         //请求后台的URL（*）
+                contentType: 'application/x-www-form-urlencoded',
+                method: 'post',                     //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: false,                     //是否启用排序
+                sortOrder: "asc",                   //排序方式
+                queryParams: queryParams,           //传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 5,                       //每页的记录行数（*）
+                pageList: [5, 10, 15, 20],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                paginationPreText: "上一页",
+                paginationNextText: "下一页",
+                columns: columns
+            });
+
+            //$scope.add = function () {
+            //    $("#myModal").modal("show");
+            //    $scope.item = null;
+            //    $scope.title = "添加";
+            //    $scope.$apply();
+            //};
+
+            $("#btnAdd").click(function () {
+                $("#myModal").modal("show");
+                $scope.item =null;
+                $scope.title = "添加";
+                $scope.$apply();
+                $("label.error").hide();
+                $(".error").removeClass("error");
+            });
+
+            var valid = $("#formInfo").validate({
+                rules: {
+                    "item.Name": { required: true, maxlength: 30 },
+                    "item.Duty": { required: true, maxlength: 30 },
+                    "item.Phone": { required: true, maxlength: 30 },
+                    "item.Sex": { required: true },
+                    "item.Age": { required: true, digits: true }
+                }
+            });
+
+            $scope.search = function () {
+                $("#bsTable").bootstrapTable('refresh');
+            };
+
+            $scope.ResetSearch = function () {
+                $scope.search.Name = "";
+                $scope.search.Duty = "";
+                //$scope.search = {};
+                //$scope.$watch();
+                $("#bsTable").bootstrapTable('refresh');
+            };
+
+            $scope.save = function () {
+                if (valid.form()) {
+                    if ($scope.item.Id == null) {
+                        Ewin.confirm({ message: "确认要添加信息吗？" }).on(function (e) {
+                            if (!e) {
+                                return;
+                            }
+                            else {
+                                //console.log($scope.item);
+                                $http.post("/Test/CrudInsert", $scope.item, ngConfig).success(function (result) {
+                                    if (result == "ok") {
+                                        $("#myModal").modal("hide");
+                                        $("#bsTable").bootstrapTable('refresh');
+                                        toastr.success("操作成功！", "提示");
+                                    }
+                                    else {
+                                        toastr.error("保存错误，请联系5613877！", "提示");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        Ewin.confirm({ message: "确认要修改信息吗？" }).on(function (e) {
+                            if (!e) {
+                                return;
+                            }
+                            else {
+                                var data = {
+                                    "item": $scope.item
+                                };
+                                $http.post("/MaterialQualityType/Update", data, ngConfig).success(function (result) {
+                                    if (result == "ok") {
+                                        $("#myModal").modal("hide");
+                                        toastr.success("操作成功！", "提示");
+                                    }
+                                    else {
+                                        toastr.error("保存错误，请联系5613877！", "提示");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                };
+
+                
+            };
+        });
+</script>

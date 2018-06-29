@@ -703,6 +703,7 @@
     <Content Include="Views\MaterialQualityFeedback\SearchInfo.cshtml" />
     <Content Include="Views\MaterialQualityFeedback\InfoShowPublicCode.cshtml" />
     <Content Include="Scripts\jquery-1.11.3.min.map" />
+    <Content Include="Views\Test\NgBsTableDBPost.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
