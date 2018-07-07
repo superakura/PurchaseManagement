@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "TestForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Uploadify</h2>
+<link href="~/Uploadify/uploadify.css" rel="stylesheet" />
+<script src="~/Uploadify/jquery.uploadify.min.js"></script>
+<form role="form">
+    <div class="row">
+        <div class="col-md-12 form-inline">
+            <div class="form-group">
+                <label>ERP物资编码</label>
+                <input id="fileErpUpload" name="fileErpUpload" type="file" class="form-control" />
+            </div>
+            <button class="btn btn-success" type="button" id="btnErpUpload">
+                <i class="glyphicon glyphicon-upload"></i> 上传Erp编码
+            </button>
+        </div>
+    </div>
+    <br /><hr /><br />
+    <div class="row">
+        <div class="col-md-12 form-inline">
+            <div class="form-group">
+                <label>5497分类</label>
+                <input id="file5497Upload" type="file" name="file5497Upload" class="form-control" />
+            </div>
+            <button class="btn btn-info" type="button" id="btn5497Upload">
+                <i class="glyphicon glyphicon-upload"></i> 上传5497分类
+            </button>
+        </div>
+    </div>
+    <br /><hr /><br />
+    <div class="row">
+        <div class="col-md-12 form-inline">
+            <button class="btn btn-primary" type="button" id="btnUpdate">
+                <i class="glyphicon glyphicon-saved"></i> 更新数据
+            </button>
+        </div>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+        $("#file5497Upload").uploadify({
+            'swf': '~/Uploadify/uploadify.swf',
+            'uploader': '/Insert/PumpFormUpload',
+            'cancelImg': '~/Uploadify/uploadify-cancel.png',
+            'buttonText': '选择上传文件',
+            'fileTypeExts': '*.xls;',
+            'auto': false,
+            'sizeLimit': '4096000',
+            'multi': false,
+            'uploadLimit': 999,
+            'queueSizeLimit': 1,
+            'removeCompleted': true,
+            'onUploadSuccess': function (file, data, response) {
+                //file – 文件对象
+                //data – 服务端输出返回的信息
+                //response – 有输出时为true,如果无响应为fals
+                var file = data;
+
+                var args = { "file": file };
+                $.post("/Insert/UplodePump", encodeURIComponent(JSON.stringify(args)), function (result) {
+                    if (result == "ok") {
+                        toastr.success("上传文件成功！", "提示");
+                        $('#uploadify').uploadify('cancel', '*');
+                    }
+                    else {
+                        toastr.error(result, "提示");
+                    }
+                });
+            }
+        });
+
+        $("#btn5497Upload").click(function () {
+            if ($("#file5497Upload").data('file5497Upload').queueData.queueLength > 0) {
+                Ewin.confirm({ message: "确认要吗上传文件吗？" }).on(function (e) {
+                    if (!e) {
+                        return;
+                    }
+                    else {
+                        $('#uploadify').uploadify('upload', '*');
+                    }
+                });
+            }
+            else {
+                toastr.info("请选择要上传的文件！", "提示");
+            }
+        });
+    });
+</script>

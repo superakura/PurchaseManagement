@@ -11,7 +11,7 @@ namespace PurchaseManagement.Controllers
     {
         private Models.DB db = new Models.DB();
 
-        public ViewResult Form()
+        public ViewResult Uploadify()
         {
             return View();
         }
@@ -61,19 +61,6 @@ namespace PurchaseManagement.Controllers
             return Json(new { total = result.Count(), rows = result.Skip(offset).Take(limit).ToList() },JsonRequestBehavior.AllowGet);
         }
 
-        public string GetTest()
-        {
-            return "okxxx";
-        }
-
-        public string GetTestAjax()
-        {
-            var infoList =
-  JsonConvert.DeserializeObject<Dictionary<String, Object>>(HttpUtility.UrlDecode(Request.Form.ToString()));
-            var userNum = infoList["test"].ToString();
-            return "ok" + userNum;
-        }
-
         [HttpPost]
         public string CrudInsert()
         {
@@ -98,6 +85,19 @@ namespace PurchaseManagement.Controllers
             {
                 return ex.Message;
             }
+        }
+
+        public string GetTest()
+        {
+            return "okxxx";
+        }
+
+        public string GetTestAjax()
+        {
+            var infoList =
+  JsonConvert.DeserializeObject<Dictionary<String, Object>>(HttpUtility.UrlDecode(Request.Form.ToString()));
+            var userNum = infoList["test"].ToString();
+            return "ok" + userNum;
         }
     }
 }

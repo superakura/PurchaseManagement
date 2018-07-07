@@ -1,0 +1,285 @@
+﻿
+@{
+    ViewBag.Title = "物资编码查询";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-lg">
+        <form id="formInfo">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="modalTitle">公告信息</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="tbxTitle">反馈单名称<span class="text-danger">(必填)</span></label>
+                                        <input type="text" class="form-control" name="tbxTitle" id="tbxTitle" placeholder="反馈单名称">
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="tbxErpPlanNum">ERP计划预留号<span class="text-danger">(必填)</span></label>
+                                        <input type="text" class="form-control" name="tbxErpPlanNum" id="tbxErpPlanNum" placeholder="ERP计划预留号">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="tbxSupplierName">供应商名称<span class="text-danger">(必填)</span></label>
+                                        <input type="text" class="form-control" name="tbxSupplierName" id="tbxSupplierName" placeholder="供应商名称">
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="tbxMaterialNum">物资编码<span class="text-danger">(必填)</span></label>
+                                        <input type="text" class="form-control" name="tbxMaterialNum" id="tbxMaterialNum" placeholder="物资编码">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="ddlMaterialQualityType">物资质量问题类别<span class="text-danger">(必填)</span></label>
+                                        <select class="form-control" id="ddlMaterialQualityType"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="tbxErpOrderNum">ERP订单号<span class="text-danger">(选填)</span></label>
+                                        <input type="text" class="form-control" name="tbxErpOrderNum" id="tbxErpOrderNum" placeholder="ERP订单号">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="editor">问题内容<span class="text-danger">(必填)</span></label>
+                                        <script id="editor" type="text/plain" style="height:200px;">
+                                        </script>
+                                    </div>
+                                    <span class="hidden" id="InfoID"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" id="btnSave" class="btn btn-info">
+                        <i class="glyphicon glyphicon-floppy-save"></i> 保存
+                    </button>
+                    <button type="button" id="btnSubmit" class="btn btn-primary">
+                        <i class="glyphicon glyphicon-ok"></i> 提交
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="box box-danger">
+    <div class="box-header">
+        <h3 class="box-title">物资编码查询</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12 form-inline">
+                <div class="form-group">
+                    <label>物料</label>
+                    <input type="text" class="form-control" id="tbxMaterialNumSearch" />
+                </div>
+                <div class="form-group">
+                    <label>物料组</label>
+                    <input type="text" class="form-control" id="tbxMaterialNumChildSearch" />
+                </div>
+                <div class="form-group">
+                    <label>物料描述</label>
+                    <input type="text" class="form-control" id="tbxMaterialDescSearch" />
+                </div>
+                <div class="form-group">
+                    <label>ValCl</label>
+                    <input type="text" class="form-control" id="tbxValClSearch" />
+                </div>
+                <div class="form-group">
+                    <label>PGr</label>
+                    <input type="text" class="form-control" id="tbxPGrSearch" />
+                </div>
+
+                <button class="btn btn-info" id="btnSearch">
+                    <i class="glyphicon glyphicon-search"></i> 查询
+                </button>
+                <button type="button" id="btnReset" class="btn bg-navy">
+                    <span class="glyphicon glyphicon-repeat"></span> 重置
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table id="bsTable"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //初始化BS-Table
+    var columns = [
+        {
+            checkbox: true
+        },
+        {
+            title: '序号',
+            formatter: function (value, row, index) {
+                return index + 1;
+            }
+        },
+        {
+            field: 'MaterialListID',
+            title: '数据ID',
+            visible: false,//false表示不显示
+        },
+        {
+            field: 'PGr',
+            title: 'PGr'
+        },
+        {
+            field: 'Typ',
+            title: 'Typ',
+            visible: false
+        },
+        {
+            field: 'Factory',
+            title: '工厂',
+            visible: false
+        },
+        {
+            field: 'MaterialNum',
+            title: '物料',
+            visible: true
+        },
+        {
+            field: 'MaterialDesc',
+            title: '物料描述',
+            visible: true
+        },
+        {
+            field: 'MaterialCategoryNum',
+            title: '物料组',
+            visible: true
+        },
+        {
+            field: 'ChangeDate',
+            title: '上次更改',
+            visible: false
+        },
+        {
+            field: 'MaterialUnit',
+            title: '计',
+            visible: true
+        },
+        {
+            field: 'ValCl',
+            title: 'ValCl',
+            visible: true
+        },
+        {
+            field: 'Money',
+            title: '金额',
+            visible: false
+        },
+        {
+            field: 'Currency',
+            title: '货币',
+            visible: false
+        },
+        {
+            field: 'operate',
+            title: '操作',
+            align: 'center',
+            events: operateEventsEdit,
+            formatter: operateFormatterEdit
+        }];
+    var queryParams = function (params) {
+        var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+            limit: params.limit,   //页面大小
+            offset: params.offset,  //页码
+            materialNum: $("#tbxMaterialNumSearch").val(),
+            materialNumChild: $("#tbxMaterialNumChildSearch").val(),
+            materialDesc: $("#tbxMaterialDescSearch").val(),
+            valCl: $("#tbxValClSearch").val(),
+            pGr: $("#tbxPGrSearch").val()
+        };
+        return temp;
+    };
+    var operateEventsEdit = {
+        'click .edit': function (e, value, row, index) {
+        },
+        'click .remove': function (e, value, row, index) {
+        }
+    };
+    function operateFormatterEdit(value, row, index) {
+        return [
+            '<a class="edit" href="javascript:void(0)" title="edit">',
+            '<i class="glyphicon glyphicon-pencil"></i>',
+            '</a>  ',
+            '<a class="remove" href="javascript:void(0)" title="remove">',
+            '<i class="glyphicon glyphicon-trash"></i>',
+            '</a>'
+        ].join('&nbsp;&nbsp;');
+    }
+    $('#bsTable').bootstrapTable({
+        url: '/MaterialCode/GetMaterialList',         //请求后台的URL（*）
+        contentType: 'application/x-www-form-urlencoded',
+        method: 'post',                     //请求方式（*）
+        toolbar: '#toolbar',                //工具按钮用哪个容器
+        striped: true,                      //是否显示行间隔色
+        cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+        pagination: true,                   //是否显示分页（*）
+        sortable: false,                     //是否启用排序
+        sortOrder: "asc",                   //排序方式
+        queryParams: queryParams,           //传递参数（*）
+        sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+        pageNumber: 1,                       //初始化加载第一页，默认第一页
+        pageSize: 10,                       //每页的记录行数（*）
+        pageList: [5, 10, 15, 20],        //可供选择的每页的行数（*）
+        search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+        strictSearch: true,
+        showColumns: true,                  //是否显示所有的列
+        showRefresh: true,                  //是否显示刷新按钮
+        minimumCountColumns: 2,             //最少允许的列数
+        clickToSelect: false,                //是否启用点击选中行
+        //height: 600,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+        uniqueId: "MaterialListID",           //每一行的唯一标识，一般为主键列
+        showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+        cardView: false,                    //是否显示详细视图
+        detailView: false,                   //是否显示父子表
+        paginationPreText: "上一页",
+        paginationNextText: "下一页",
+        showExport: false,                     //是否显示导出
+        columns: columns
+    });
+
+    //搜索按钮
+    $("#btnSearch").click(function () {
+        $("#bsTable").bootstrapTable('refresh');
+    });
+
+    //重置按钮
+    $("#btnReset").click(function () {
+        $("#tbxMaterialNumSearch,#tbxMaterialNumChildSearch,#tbxMaterialDescSearch,#tbxValClSearch,#tbxPGrSearch").val("");
+        $("#bsTable").bootstrapTable('refresh');
+    });
+</script>
+

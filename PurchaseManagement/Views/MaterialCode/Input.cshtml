@@ -1,0 +1,186 @@
+﻿
+@{
+    ViewBag.Title = "物资编码导入";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="box box-danger">
+    <div class="box-header">
+        <h3 class="box-title">物资编码导入</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12 form-inline">
+                <form method="post" enctype="multipart/form-data" id="formErp" name="formErp">
+                    <div class="form-group">
+                        <label>ERP物资编码</label>
+                        <input id="fileErpUpload" name="fileErpUpload" type="file" class="form-control" />
+                    </div>
+                    <button class="btn btn-success" type="button" id="btnErpUpload">
+                        <i class="glyphicon glyphicon-upload"></i> 上传Erp编码
+                    </button>
+                </form>
+                <span id="fileErpUploadName"></span>
+            </div>
+        </div>
+        <br /><hr /><br />
+        <div class="row">
+            <div class="col-md-12 form-inline">
+                <form method="post" enctype="multipart/form-data" id="form5497" name="form5497">
+                    <div class="form-group">
+                        <label>5497分类</label>
+                        <input id="file5497Upload" type="file" name="file5497Upload" class="form-control" />
+                    </div>
+                    <button class="btn btn-info" type="button" id="btn5497Upload">
+                        <i class="glyphicon glyphicon-upload"></i> 上传5497分类
+                    </button>
+                </form>
+                <span id="file5497UploadName"></span>
+            </div>
+        </div>
+        <br /><hr /><br />
+        <div class="row">
+            <div class="col-md-12 form-inline">
+                <button class="btn btn-primary" id="btnUpdate">
+                    <i class="glyphicon glyphicon-saved"></i> 更新数据
+                </button>
+                <button type="button" id="btnReset" class="btn bg-navy">
+                    <span class="glyphicon glyphicon-refresh"></span> 重置
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box box-primary">
+    <div class="box-header">
+        <h3 class="box-title">缺失编码信息</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#btn5497Upload").click(function () {
+            var file5497 = $("#file5497Upload").val();
+            if (file5497 == "") {
+                toastr.error("请选择文件！", "提示");
+            }
+            else {
+                var ext = file5497.split(".");
+                if (ext[1] == "xls" || ext[1] == "xlsx") {
+                    Ewin.confirm({ message: "确定要上传吗？" }).on(function (e) {
+                        if (!e) {
+                            return;
+                        }
+                        else {
+                            $("#form5497").ajaxSubmit({
+                                url: "/MaterialCode/Upload5497FileAjax",
+                                type: "post",
+                                success: function (result) {
+                                    if (result.state == "ok") {
+                                        toastr.success("文件上传成功！", "提示");
+                                        $("#file5497UploadName").text(result.fileName);
+                                    }
+                                    if (result == "noFile") {
+                                        toastr.error("请选择文件！", "提示");
+                                    }
+                                },
+                                error: function (error) {
+                                    toastr.error("" + error + "！", "提示");
+                                }
+                            });
+                        }
+                    });
+                }
+                else {
+                    toastr.error("请选择Excel文件！", "提示");
+                }
+            }
+        });
+
+        $("#btnErpUpload").click(function () {
+            var fileErp = $("#fileErpUpload").val();
+            if (fileErp == "") {
+                toastr.error("请选择文件！", "提示");
+            }
+            else {
+                var ext = fileErp.split(".");
+                if (ext[1] == "xls" || ext[1] == "xlsx") {
+                    Ewin.confirm({ message: "确定要上传吗？" }).on(function (e) {
+                        if (!e) {
+                            return;
+                        }
+                        else {
+                            $("#formErp").ajaxSubmit({
+                                url: "/MaterialCode/UploadErpFileAjax",
+                                type: "post",
+                                success: function (result) {
+                                    if (result.state == "ok") {
+                                        toastr.success("文件上传成功！", "提示");
+                                        $("#fileErpUploadName").text(result.fileName);
+                                    }
+                                    if (result == "noFile") {
+                                        toastr.error("请选择文件！", "提示");
+                                    }
+                                },
+                                error: function (error) {
+                                    toastr.error("" + error + "！", "提示");
+                                }
+                            });
+                        }
+                    });
+                }
+                else {
+                    toastr.error("请选择Excel文件！", "提示");
+                }
+            }
+        });
+
+        $("#btnReset").click(function () {
+            $("input:file").val("");
+            $("#file5497UploadName,#fileErpUploadName").text("");
+        });
+
+        $("#btnUpdate").click(function () {
+            var fileErp = $("#fileErpUploadName").text();
+            var file5497 = $("#file5497UploadName").text();
+            if (fileErp == "" || file5497 == "") {
+                toastr.error("请先上传文件，再更新数据！", "提示");
+            }
+            else {
+                Ewin.confirm({ message: "确定要更新数据吗？" }).on(function (e) {
+                    if (!e) {
+                        return;
+                    }
+                    else {
+                        var args = {
+                            "fileErp": fileErp,
+                            "file5497": file5497
+                        };
+                        $.post("/MaterialCode/UpdateMaterialListBulkCopy", args, function (result) {
+                            console.log(result);
+                            //if (result == "ok") {
+                            //    $("#myModal").modal("hide");
+                            //    toastr.success("操作成功！", "提示");
+                            //}
+                            //else {
+                            //    toastr.error("系统错误，请联系5613877！", "提示");
+                            //}
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>

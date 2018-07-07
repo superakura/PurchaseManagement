@@ -29,15 +29,16 @@
         public virtual DbSet<NoticeInfo> NoticeInfo { get; set; }//通知公告信息表
         public virtual DbSet<UserDept> UserDept { get; set; }//用户部门关系表
         public virtual DbSet<Log> Log { get; set; }//日志信息表
+
         public virtual DbSet<MaterialQualityFeedback> MaterialQualityFeedback { get; set; }//物质质量反馈表
         public virtual DbSet<MaterialQualityType> MaterialQualityType { get; set; }//物质质量类型表
-        public virtual DbSet<SupplierAppraise> SupplierAppraise { get; set; }//供应商日常考核记录单
-        public virtual DbSet<Crud> Crud { get; set; }//Crud测试表
-    }
+        public virtual DbSet<SupplierAppraise> SupplierAppraise { get; set; }//供应商日常考核记录单--暂时不用
 
-    //public class MyEntity
-    //{
-    //    public int Id { get; set; }
-    //    public string Name { get; set; }
-    //}
+        public virtual DbSet<Crud> Crud { get; set; }//Crud测试表
+
+        public virtual DbSet<CategoryList5497> CategoryList5497 { get; set; }//5497分类表
+        public virtual DbSet<MaterialList> MaterialList { get; set; }//物资编码信息表
+        //public virtual DbSet<RepectMaterialApply> RepectMaterialApply { get; set; }//重复编码申请审批表
+        //public virtual DbSet<ErrorMaterialApply> ErrorMaterialApply { get; set; }//缺失编码审批表
+    }
 }

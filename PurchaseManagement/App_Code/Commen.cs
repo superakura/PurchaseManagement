@@ -1,4 +1,4 @@
-﻿//using Aspose.Cells;
+﻿using Aspose.Cells;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,14 +15,14 @@ namespace PurchaseManagement.App_Code
             return userInfo;
         }
 
-        //public static System.Data.DataTable ReadExcel(String strFileName)
-        //{
-        //    Workbook book = new Workbook();
-        //    book.Open(strFileName);
-        //    Worksheet sheet = book.Worksheets[0];
-        //    Cells cells = sheet.Cells;
+        public static System.Data.DataTable ReadExcel(String strFileName)
+        {
+            Workbook book = new Workbook();
+            book.Open(strFileName);
+            Worksheet sheet = book.Worksheets[0];
+            Cells cells = sheet.Cells;
 
-        //    return cells.ExportDataTableAsString(0, 0, cells.MaxDataRow + 1, cells.MaxDataColumn + 1, true);
-        //}
+            return cells.ExportDataTableAsString(0, 0, cells.MaxDataRow + 1, cells.MaxDataColumn + 1, true);
+        }
     }
 }

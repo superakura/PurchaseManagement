@@ -439,6 +439,7 @@
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
+    <Content Include="Scripts\jquery-form.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.messages_cn.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -549,10 +550,21 @@
     <Content Include="ueditor.all.min.js" />
     <Content Include="ueditor.config.js" />
     <Content Include="ng-js\CrudController.js" />
+    <Content Include="Uploadify\Change Log.txt" />
+    <Content Include="Uploadify\img\browse-btn.png" />
+    <Content Include="Uploadify\img\uploadify-cancel.png" />
+    <Content Include="Uploadify\jquery.uploadify.js" />
+    <Content Include="Uploadify\jquery.uploadify.min.js" />
+    <Content Include="Uploadify\license.txt" />
+    <Content Include="Uploadify\uploadify-cancel.png" />
+    <Content Include="Uploadify\uploadify.css" />
+    <Content Include="Uploadify\uploadify.swf" />
+    <Content Include="Uploadify\__MACOSX\._Change Log.txt" />
+    <Content Include="Uploadify\__MACOSX\._uploadify.swf" />
     <Content Include="Web.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
-    <Content Include="Views\Test\Form.cshtml" />
+    <Content Include="Views\Test\Uploadify.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\Commen.cs" />
@@ -647,15 +659,43 @@
     <Compile Include="Migrations\201806040137126_edit17.Designer.cs">
       <DependentUpon>201806040137126_edit17.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201807040008064_edit18.cs" />
+    <Compile Include="Migrations\201807040008064_edit18.Designer.cs">
+      <DependentUpon>201807040008064_edit18.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807040637106_edit19.cs" />
+    <Compile Include="Migrations\201807040637106_edit19.Designer.cs">
+      <DependentUpon>201807040637106_edit19.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807060112478_edit20.cs" />
+    <Compile Include="Migrations\201807060112478_edit20.Designer.cs">
+      <DependentUpon>201807060112478_edit20.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807060149415_edit21.cs" />
+    <Compile Include="Migrations\201807060149415_edit21.Designer.cs">
+      <DependentUpon>201807060149415_edit21.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807060152294_edit22.cs" />
+    <Compile Include="Migrations\201807060152294_edit22.Designer.cs">
+      <DependentUpon>201807060152294_edit22.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807060659373_edit23.cs" />
+    <Compile Include="Migrations\201807060659373_edit23.Designer.cs">
+      <DependentUpon>201807060659373_edit23.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AuthorityInfo.cs" />
+    <Compile Include="Models\CategoryList5497.cs" />
     <Compile Include="Models\Crud.cs" />
     <Compile Include="Models\DB.cs" />
     <Compile Include="Models\DeptInfo.cs" />
+    <Compile Include="Models\ErrorMaterialApply.cs" />
     <Compile Include="Models\Log.cs" />
+    <Compile Include="Models\MaterialList.cs" />
     <Compile Include="Models\MaterialQualityFeedback.cs" />
     <Compile Include="Models\MaterialQualityType.cs" />
     <Compile Include="Models\NoticeInfo.cs" />
+    <Compile Include="Models\RepectMaterialApply.cs" />
     <Compile Include="Models\RoleAuthority.cs" />
     <Compile Include="Models\RoleInfo.cs" />
     <Compile Include="Models\SupplierAppraise.cs" />
@@ -704,6 +744,14 @@
     <Content Include="Views\MaterialQualityFeedback\InfoShowPublicCode.cshtml" />
     <Content Include="Scripts\jquery-1.11.3.min.map" />
     <Content Include="Views\Test\NgBsTableDBPost.cshtml" />
+    <Content Include="Views\MaterialCode\Search.cshtml" />
+    <Content Include="Views\MaterialCode\Input.cshtml" />
+    <Content Include="Views\MaterialCode\MySubmit.cshtml" />
+    <Content Include="Views\MaterialCode\ErrorCode.cshtml" />
+    <Content Include="Views\MaterialCode\Check.cshtml" />
+    <Content Include="Uploadify\check-exists.php" />
+    <Content Include="Uploadify\index.php" />
+    <Content Include="Uploadify\uploadify.php" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -714,10 +762,10 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="FileOutput\" />
+    <Folder Include="FileUpload\" />
     <Folder Include="net\upload\file\" />
     <Folder Include="net\upload\image\" />
     <Folder Include="Template\" />
-    <Folder Include="Views\MaterialCode\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201803260221151_edit.resx">
@@ -776,6 +824,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201806040137126_edit17.resx">
       <DependentUpon>201806040137126_edit17.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807040008064_edit18.resx">
+      <DependentUpon>201807040008064_edit18.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807040637106_edit19.resx">
+      <DependentUpon>201807040637106_edit19.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807060112478_edit20.resx">
+      <DependentUpon>201807060112478_edit20.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807060149415_edit21.resx">
+      <DependentUpon>201807060149415_edit21.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807060152294_edit22.resx">
+      <DependentUpon>201807060152294_edit22.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807060659373_edit23.resx">
+      <DependentUpon>201807060659373_edit23.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
